@@ -22,6 +22,8 @@ namespace HotWire
         public MainWindow()
         {
             InitializeComponent();
+
+            // test
         }
     }
 }
