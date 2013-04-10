@@ -9,7 +9,6 @@ namespace HotWire
 {
     /// <summary>
     /// Interaktionslogik für "App.xaml"
-    /// ICH war hier :)
     /// </summary>
     public partial class App : Application
     {
