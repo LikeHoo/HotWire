@@ -25,13 +25,13 @@ namespace XnaHotWire
 
         // positions 
         Vector2 _loopPosition;
-        const int PersonMoveSpeed = 5;
+        const int LoopMoveSpeed = 5;
 
         // Blocks
         readonly Vector2 _blockPosition = new Vector2();
 
         // For when a collision is detected
-        bool _personHit;
+        bool _loopHit;
 
         // The sub-rectangle of the drawable area which should be visible on all TVs
         Rectangle _safeBounds;
@@ -66,7 +66,7 @@ namespace XnaHotWire
                 (int)(viewport.Width * (1 - 2 * SafeAreaPortion)),
                 (int)(viewport.Height * (1 - 2 * SafeAreaPortion)));
 
-            // Start the player in the center along the bottom of the screen
+            // Start the loop in the center along the bottom of the screen
 // ReSharper disable PossibleLossOfFraction
             _loopPosition.X = (_safeBounds.Width - _loopTexture.Width) / 2;
 // ReSharper restore PossibleLossOfFraction
@@ -110,31 +110,32 @@ namespace XnaHotWire
                 Exit();
             }
 
-            // Move the player left and right with arrow keys or d-pad
+            // Move the loop left and right with arrow keys or d-pad
             if (keyboard.IsKeyDown(Keys.Left) || gamePad.DPad.Left == ButtonState.Pressed)
             {
-                _loopPosition.X -= PersonMoveSpeed;
+                _loopPosition.X -= LoopMoveSpeed;
             }
 
             if (keyboard.IsKeyDown(Keys.Right) || gamePad.DPad.Right == ButtonState.Pressed)
             {
-                _loopPosition.X += PersonMoveSpeed;
+                _loopPosition.X += LoopMoveSpeed;
             }
 
-            if (keyboard.IsKeyDown(Keys.Up) || gamePad.DPad.Right == ButtonState.Pressed)
+            // Move the loop up and down with arrow keys or d-pad
+            if (keyboard.IsKeyDown(Keys.Up) || gamePad.DPad.Up == ButtonState.Pressed)
             {
-                _loopPosition.Y -= PersonMoveSpeed;
+                _loopPosition.Y -= LoopMoveSpeed;
             }
 
-            if (keyboard.IsKeyDown(Keys.Down) || gamePad.DPad.Right == ButtonState.Pressed)
+            if (keyboard.IsKeyDown(Keys.Down) || gamePad.DPad.Down == ButtonState.Pressed)
             {
-                _loopPosition.Y += PersonMoveSpeed;
+                _loopPosition.Y += LoopMoveSpeed;
             }
 
-            // Prevent the person from moving off of the screen
+            // Prevent the loop from moving off of the screen
             _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTexture.Width);
 
-            // Get the bounding rectangle of the person
+            // Get the bounding rectangle of the loop
             Rectangle loopRectangle = new Rectangle((int)_loopPosition.X, (int)_loopPosition.Y,
                 _loopTexture.Width, _loopTexture.Height);
 
@@ -142,13 +143,13 @@ namespace XnaHotWire
             Rectangle wireRectangle = new Rectangle(0, 0, _wireTexture.Width, _wireTexture.Height);
 
             // Update each block
-            _personHit = false;
+            _loopHit = false;
 
            //  Check collision with the wire
             if (IntersectPixels(wireRectangle, _wireTextureData,
                                     loopRectangle, _loopTextureData))
             {
-                _personHit = true;
+                _loopHit = true;
             }
 
             base.Update(gameTime);
@@ -163,13 +164,13 @@ namespace XnaHotWire
             GraphicsDevice device = _graphics.GraphicsDevice;
 
             // Change the background to red when the wire was hit by a block
-            if (_personHit)
+            if (_loopHit)
             {
-                device.Clear(Color.Red);
+                device.Clear(Color.CornflowerBlue);
             }
             else
             {
-                device.Clear(Color.CornflowerBlue);
+                device.Clear(Color.Red);
             }
 
             _spriteBatch.Begin();
