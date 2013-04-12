@@ -1,20 +1,7 @@
-#region File Description
-//-----------------------------------------------------------------------------
-// Game.cs
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-#region Using Statements
-
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
-#endregion
 
 namespace XnaHotWire
 {
@@ -36,7 +23,7 @@ namespace XnaHotWire
         // The images will be drawn with this SpriteBatch
         SpriteBatch _spriteBatch;
 
-        // Person 
+        // positions 
         Vector2 _loopPosition;
         Vector2 _wirePosition;
         const int PersonMoveSpeed = 5;
@@ -120,33 +107,28 @@ namespace XnaHotWire
             GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
 
             // Allows the game to exit
-            if (gamePad.Buttons.Back == ButtonState.Pressed ||
-                keyboard.IsKeyDown(Keys.Escape))
+            if (gamePad.Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
             {
                 Exit();
             }
 
             // Move the player left and right with arrow keys or d-pad
-            if (keyboard.IsKeyDown(Keys.Left) ||
-                gamePad.DPad.Left == ButtonState.Pressed)
+            if (keyboard.IsKeyDown(Keys.Left) || gamePad.DPad.Left == ButtonState.Pressed)
             {
                 _loopPosition.X -= PersonMoveSpeed;
             }
 
-            if (keyboard.IsKeyDown(Keys.Right) ||
-                gamePad.DPad.Right == ButtonState.Pressed)
+            if (keyboard.IsKeyDown(Keys.Right) || gamePad.DPad.Right == ButtonState.Pressed)
             {
                 _loopPosition.X += PersonMoveSpeed;
             }
 
-            if (keyboard.IsKeyDown(Keys.Up) ||
-                gamePad.DPad.Right == ButtonState.Pressed)
+            if (keyboard.IsKeyDown(Keys.Up) || gamePad.DPad.Right == ButtonState.Pressed)
             {
                 _loopPosition.Y -= PersonMoveSpeed;
             }
 
-            if (keyboard.IsKeyDown(Keys.Down) ||
-              gamePad.DPad.Right == ButtonState.Pressed)
+            if (keyboard.IsKeyDown(Keys.Down) || gamePad.DPad.Right == ButtonState.Pressed)
             {
                 _loopPosition.Y += PersonMoveSpeed;
             }
@@ -165,7 +147,7 @@ namespace XnaHotWire
             // Update each block
             _personHit = false;
 
-           //  Check collision with person
+           //  Check collision with the wire
             if (IntersectPixels(wireRectangle, _wireTextureData,
                                     loopRectangle, _loopTextureData))
             {
@@ -175,7 +157,6 @@ namespace XnaHotWire
             base.Update(gameTime);
         }
 
-
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -184,7 +165,7 @@ namespace XnaHotWire
         {
             GraphicsDevice device = _graphics.GraphicsDevice;
 
-            // Change the background to red when the person was hit by a block
+            // Change the background to red when the wire was hit by a block
             if (_personHit)
             {
                 device.Clear(Color.Red);
@@ -196,11 +177,10 @@ namespace XnaHotWire
 
             _spriteBatch.Begin();
 
-            // Draw person
+            // Draw loop
             _spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
 
-            //// Draw blocks
-            //foreach (Vector2 blockPosition in _wallTexture)
+            // Draw wire 
              _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
 
             _spriteBatch.End();
