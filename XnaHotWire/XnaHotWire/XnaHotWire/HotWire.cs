@@ -1,79 +1,180 @@
+#region File Description
+//-----------------------------------------------------------------------------
+// Game.cs
+//
+// Microsoft XNA Community Game Platform
+// Copyright (C) Microsoft Corporation. All rights reserved.
+//-----------------------------------------------------------------------------
+#endregion
+
+#region Using Statements
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+
+#endregion
 
 namespace XnaHotWire
 {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class HotWire : Microsoft.Xna.Framework.Game
+    public class HotWire : Game
     {
-        GraphicsDeviceManager _graphics;
+        readonly GraphicsDeviceManager _graphics;
+
+        // The images we will draw
+        Texture2D _loopTexture;
+        Texture2D _wireTexture;
+
+        // The color data for the images; used for per pixel collision
+        Color[] _loopTextureData;
+        Color[] _wireTextureData;
+
+        // The images will be drawn with this SpriteBatch
         SpriteBatch _spriteBatch;
 
-        public HotWire()
+        // Person 
+        Vector2 _loopPosition;
+        Vector2 _wirePosition;
+        const int PersonMoveSpeed = 5;
+
+        // Blocks
+        readonly Vector2 _blockPosition = new Vector2();
+
+        // For when a collision is detected
+        bool _personHit;
+
+        // The sub-rectangle of the drawable area which should be visible on all TVs
+        Rectangle _safeBounds;
+
+        // Percentage of the screen on every side is the safe area
+        const float SafeAreaPortion = 0.05f;
+
+        public HotWire(Vector2 wirePosition)
         {
+            _wirePosition = wirePosition;
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            _graphics.PreferredBackBufferWidth = 1024;
+            _graphics.PreferredBackBufferHeight = 600;
         }
 
         /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
+        /// Allows the game to perform any initialization it needs to before starting to
+        /// run. This is where it can query for any required services and load any
+        /// non-graphic related content.  Calling base.Initialize will enumerate through
+        /// any components and initialize them as well.
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
+
+            // Calculate safe bounds based on current resolution
+            Viewport viewport = _graphics.GraphicsDevice.Viewport;
+            _safeBounds = new Rectangle(
+                (int)(viewport.Width * SafeAreaPortion),
+                (int)(viewport.Height * SafeAreaPortion),
+                (int)(viewport.Width * (1 - 2 * SafeAreaPortion)),
+                (int)(viewport.Height * (1 - 2 * SafeAreaPortion)));
+
+            // Start the player in the center along the bottom of the screen
+// ReSharper disable PossibleLossOfFraction
+            _loopPosition.X = (_safeBounds.Width - _loopTexture.Width) / 2;
+// ReSharper restore PossibleLossOfFraction
+            _loopPosition.Y = _safeBounds.Height - _loopTexture.Height;
         }
 
         /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
+        /// Load your graphics content.
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            // Load textures
+            _wireTexture = Content.Load<Texture2D>("Wire");
+            _loopTexture = Content.Load<Texture2D>("Loop");
 
-            // TODO: use this.Content to load your game content here
-        }
+            // Extract collision data
+            _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
+            _wireTexture.GetData(_wireTextureData);
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
+            _loopTextureData = new Color[_loopTexture.Width * _loopTexture.Height];
+            _loopTexture.GetData(_loopTextureData);
+
+            // Create a sprite batch to draw those textures
+            _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
         }
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
+        /// checking for collisions, gathering input and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            // Get input
+            KeyboardState keyboard = Keyboard.GetState();
+            GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
 
-            // TODO: Add your update logic here
+            // Allows the game to exit
+            if (gamePad.Buttons.Back == ButtonState.Pressed ||
+                keyboard.IsKeyDown(Keys.Escape))
+            {
+                Exit();
+            }
+
+            // Move the player left and right with arrow keys or d-pad
+            if (keyboard.IsKeyDown(Keys.Left) ||
+                gamePad.DPad.Left == ButtonState.Pressed)
+            {
+                _loopPosition.X -= PersonMoveSpeed;
+            }
+
+            if (keyboard.IsKeyDown(Keys.Right) ||
+                gamePad.DPad.Right == ButtonState.Pressed)
+            {
+                _loopPosition.X += PersonMoveSpeed;
+            }
+
+            if (keyboard.IsKeyDown(Keys.Up) ||
+                gamePad.DPad.Right == ButtonState.Pressed)
+            {
+                _loopPosition.Y -= PersonMoveSpeed;
+            }
+
+            if (keyboard.IsKeyDown(Keys.Down) ||
+              gamePad.DPad.Right == ButtonState.Pressed)
+            {
+                _loopPosition.Y += PersonMoveSpeed;
+            }
+
+            // Prevent the person from moving off of the screen
+            _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTexture.Width);
+
+            // Get the bounding rectangle of the person
+            Rectangle loopRectangle = new Rectangle((int)_loopPosition.X, (int)_loopPosition.Y,
+                _loopTexture.Width, _loopTexture.Height);
+
+            // Get the bounding rectangle of this block
+            Rectangle wireRectangle = new Rectangle((int)_wirePosition.X, (int)_wirePosition.Y,
+                _wireTexture.Width, _wireTexture.Height);
+
+            // Update each block
+            _personHit = false;
+
+           //  Check collision with person
+            if (IntersectPixels(wireRectangle, _wireTextureData,
+                                    loopRectangle, _loopTextureData))
+            {
+                _personHit = true;
+            }
 
             base.Update(gameTime);
         }
+
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -81,11 +182,72 @@ namespace XnaHotWire
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice device = _graphics.GraphicsDevice;
 
-            // TODO: Add your drawing code here
+            // Change the background to red when the person was hit by a block
+            if (_personHit)
+            {
+                device.Clear(Color.Red);
+            }
+            else
+            {
+                device.Clear(Color.CornflowerBlue);
+            }
+
+            _spriteBatch.Begin();
+
+            // Draw person
+            _spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
+
+            //// Draw blocks
+            //foreach (Vector2 blockPosition in _wallTexture)
+             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Determines if there is overlap of the non-transparent pixels
+        /// between two sprites.
+        /// </summary>
+        /// <param name="rectangleA">Bounding rectangle of the first sprite</param>
+        /// <param name="dataA">Pixel data of the first sprite</param>
+        /// <param name="rectangleB">Bouding rectangle of the second sprite</param>
+        /// <param name="dataB">Pixel data of the second sprite</param>
+        /// <returns>True if non-transparent pixels overlap; false otherwise</returns>
+        static bool IntersectPixels(Rectangle rectangleA, Color[] dataA,
+                                    Rectangle rectangleB, Color[] dataB)
+        {
+            // Find the bounds of the rectangle intersection
+            int top = Math.Max(rectangleA.Top, rectangleB.Top);
+            int bottom = Math.Min(rectangleA.Bottom, rectangleB.Bottom);
+            int left = Math.Max(rectangleA.Left, rectangleB.Left);
+            int right = Math.Min(rectangleA.Right, rectangleB.Right);
+
+            // Check every point within the intersection bounds
+            for (int y = top; y < bottom; y++)
+            {
+                for (int x = left; x < right; x++)
+                {
+                    // Get the color of both pixels at this point
+                    Color colorA = dataA[(x - rectangleA.Left) +
+                                         (y - rectangleA.Top) * rectangleA.Width];
+                    Color colorB = dataB[(x - rectangleB.Left) +
+                                         (y - rectangleB.Top) * rectangleB.Width];
+
+                    // If both pixels are not completely transparent,
+                    if (colorA.A != 0 && colorB.A != 0)
+                    {
+                        // then an intersection has been found
+                        return true;
+                    }
+                }
+            }
+
+            // No intersection found
+            return false;
         }
     }
 }
