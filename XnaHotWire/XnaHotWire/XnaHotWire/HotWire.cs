@@ -25,7 +25,7 @@ namespace XnaHotWire
 
         // positions 
         Vector2 _loopPosition;
-        const int LoopMoveSpeed = 5;
+        const int LoopMoveSpeed = 2;
 
         // Blocks
         readonly Vector2 _blockPosition = new Vector2();
@@ -79,8 +79,8 @@ namespace XnaHotWire
         protected override void LoadContent()
         {
             // Load textures
-            _wireTexture = Content.Load<Texture2D>("Wire");
-            _loopTexture = Content.Load<Texture2D>("Loop");
+            _wireTexture = Content.Load<Texture2D>("Wire001");
+            _loopTexture = Content.Load<Texture2D>("Loop001");
 
             // Extract collision data
             _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
@@ -116,6 +116,7 @@ namespace XnaHotWire
                 _loopPosition.X -= LoopMoveSpeed;
             }
 
+            //Constant movement by always increasing position?
             if (keyboard.IsKeyDown(Keys.Right) || gamePad.DPad.Right == ButtonState.Pressed)
             {
                 _loopPosition.X += LoopMoveSpeed;
