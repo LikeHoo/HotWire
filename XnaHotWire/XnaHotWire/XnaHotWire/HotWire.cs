@@ -24,11 +24,12 @@ namespace XnaHotWire
         SpriteBatch _spriteBatch;
 
         // positions 
-        Vector2 _loopPosition;        
+        Vector2 _loopPosition;
         const int LoopMoveSpeed = 2;
 
         // direction
         Vector2 _loopDirection;
+        Vector2 _loopOrigin;
         float _loopAngle;
 
         // Blocks
@@ -71,9 +72,9 @@ namespace XnaHotWire
                 (int)(viewport.Height * (1 - 2 * SafeAreaPortion)));
 
             // Start the loop in the center along the bottom of the screen
-// ReSharper disable PossibleLossOfFraction
+            // ReSharper disable PossibleLossOfFraction
             //_loopPosition.X = (_safeBounds.Width - _loopTexture.Width) / 2;            
-// ReSharper restore PossibleLossOfFraction
+            // ReSharper restore PossibleLossOfFraction
             //_loopPosition.Y = _safeBounds.Height - _loopTexture.Height;
 
             // Start loop at outer left and middle height, add +50 to match wire
@@ -154,7 +155,12 @@ namespace XnaHotWire
             // Update each block
             _loopHit = false;
 
-           //  Check collision with the wire
+            // Update angle
+            //TODO: calculate angle
+            //_loopAngle;
+            //_loopDirection;
+
+            //  Check collision with the wire
             if (IntersectPixels(wireRectangle, _wireTextureData,
                                     loopRectangle, _loopTextureData))
             {
@@ -186,9 +192,11 @@ namespace XnaHotWire
 
             // Draw loop
             _spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
+            //TODO: rotate
+            //_spriteBatch.Draw(_loopTexture, _loopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
 
             // Draw wire 
-             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
+            _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
 
             _spriteBatch.End();
 
