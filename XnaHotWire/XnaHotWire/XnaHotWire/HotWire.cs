@@ -24,8 +24,12 @@ namespace XnaHotWire
         SpriteBatch _spriteBatch;
 
         // positions 
-        Vector2 _loopPosition;
+        Vector2 _loopPosition;        
         const int LoopMoveSpeed = 2;
+
+        // direction
+        Vector2 _loopDirection;
+        float _loopAngle;
 
         // Blocks
         readonly Vector2 _blockPosition = new Vector2();
@@ -37,7 +41,7 @@ namespace XnaHotWire
         Rectangle _safeBounds;
 
         // Percentage of the screen on every side is the safe area
-        const float SafeAreaPortion = 0.05f;
+        private const float SafeAreaPortion = 0.00f;//old value 0.05f
 
         public HotWire()
         {
@@ -68,9 +72,13 @@ namespace XnaHotWire
 
             // Start the loop in the center along the bottom of the screen
 // ReSharper disable PossibleLossOfFraction
-            _loopPosition.X = (_safeBounds.Width - _loopTexture.Width) / 2;
+            //_loopPosition.X = (_safeBounds.Width - _loopTexture.Width) / 2;            
 // ReSharper restore PossibleLossOfFraction
-            _loopPosition.Y = _safeBounds.Height - _loopTexture.Height;
+            //_loopPosition.Y = _safeBounds.Height - _loopTexture.Height;
+
+            // Start loop at outer left and middle height, add +50 to match wire
+            _loopPosition.X = 0;
+            _loopPosition.Y = _safeBounds.Height / 2 - _loopTexture.Height + 50;
         }
 
         /// <summary>
