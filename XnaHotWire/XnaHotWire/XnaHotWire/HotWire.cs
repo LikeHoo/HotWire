@@ -25,7 +25,6 @@ namespace XnaHotWire
 
         // positions 
         Vector2 _loopPosition;
-        Vector2 _wirePosition;
         const int PersonMoveSpeed = 5;
 
         // Blocks
@@ -40,9 +39,8 @@ namespace XnaHotWire
         // Percentage of the screen on every side is the safe area
         const float SafeAreaPortion = 0.05f;
 
-        public HotWire(Vector2 wirePosition)
+        public HotWire()
         {
-            _wirePosition = wirePosition;
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
@@ -141,8 +139,7 @@ namespace XnaHotWire
                 _loopTexture.Width, _loopTexture.Height);
 
             // Get the bounding rectangle of this block
-            Rectangle wireRectangle = new Rectangle((int)_wirePosition.X, (int)_wirePosition.Y,
-                _wireTexture.Width, _wireTexture.Height);
+            Rectangle wireRectangle = new Rectangle(0, 0, _wireTexture.Width, _wireTexture.Height);
 
             // Update each block
             _personHit = false;
