@@ -3,6 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <Canvas Height="287" HorizontalAlignment="Left" Margin="12,12,0,0" Name="canvas1" VerticalAlignment="Top" Width="479">
+            <Polyline MouseMove="MouseMove"
+        Stretch="Fill"
+        Stroke="Red"
+        Points="0,0.7363636363636364 0.2,0.7363636363636364 0.2,0.827272727272727 0.4,0.827272727272727 0.4,1 0.6,1 0.6,0.454545454545455 0.8,0.454545454545455 0.8,0.363636363636364 1,0.363636363636364" Height="287" Width="479" />
+            <Ellipse Canvas.Left="114" Canvas.Top="168" Height="75"  Name="ellipse1" Stroke="Black" Width="23" >
+                <Ellipse.RenderTransform>
+                    <RotateTransform Angle="45"/>
+                </Ellipse.RenderTransform>
+             </ Ellipse>
+        </Canvas>
     </Grid>
 </Window>

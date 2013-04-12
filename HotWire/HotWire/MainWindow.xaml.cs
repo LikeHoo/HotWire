@@ -23,5 +23,14 @@ namespace HotWire
         {
             InitializeComponent();
         }
+
+        private void MouseMove(object sender, MouseEventArgs e)
+        {
+            Polyline line = (Polyline) sender;
+            
+          Canvas.GetLeft()
+
+            // Double theta = (180 / Math.PI) * Math.Atan2(e., adjacent);
+        }
     }
 }
