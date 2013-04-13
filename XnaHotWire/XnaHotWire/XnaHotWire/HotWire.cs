@@ -110,7 +110,7 @@ namespace XnaHotWire
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
 
             // Set rotation center
-            _loopOrigin = new Vector2(_loopTexture.Width/2.0f, _loopTexture.Height/2.0f);
+            _loopOrigin = new Vector2(_loopTexture.Width / 2.0f, _loopTexture.Height / 2.0f);
         }
 
         /// <summary>
@@ -133,9 +133,9 @@ namespace XnaHotWire
             // Move the loop left and right with arrow keys or d-pad
             if (keyboard.IsKeyDown(Keys.Left) || gamePad.DPad.Left == ButtonState.Pressed)
             {
-                _loopPosition.X -= LoopMoveSpeed;                
+                _loopPosition.X -= LoopMoveSpeed;
             }
-            
+
 
             //Constant movement by always increasing position?
             if (keyboard.IsKeyDown(Keys.Right) || gamePad.DPad.Right == ButtonState.Pressed)
@@ -176,8 +176,11 @@ namespace XnaHotWire
             //TODO: calculate angle
             _currentPosition = _loopPosition;
             _loopDirection = Vector2.Subtract(_currentPosition, _previousPosition);
-            _loopAngle = (float)(0.5*Math.PI) - (float)Math.Atan2(_loopDirection.X, _loopDirection.Y);
-            _previousPosition = _currentPosition;
+            _loopAngle = (float)(0.5 * Math.PI) - (float)Math.Atan2(_loopDirection.X, _loopDirection.Y);
+
+            // Set new previous position, subtracting 0.001 to avoid zero-vector
+            _previousPosition.X = _currentPosition.X - 0.001f;
+            _previousPosition.Y = _currentPosition.Y;
 
             //  Check collision with the wire
             if (IntersectPixels(wireRectangle, _wireTextureData,
@@ -214,7 +217,7 @@ namespace XnaHotWire
             //TODO: rotate             
             _spriteBatch.Draw(_loopTexture, _loopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
             //Debug:
-            //Console.WriteLine(_loopAngle+"\t"+_currentPosition+"\t"+_previousPosition);                     
+            Console.WriteLine(_loopAngle + "\t" + _currentPosition + "\t" + _previousPosition);
 
             // Draw wire 
             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
