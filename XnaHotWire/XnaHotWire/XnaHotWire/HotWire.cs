@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -31,6 +32,8 @@ namespace XnaHotWire
         Vector2 _loopDirection;
         Vector2 _loopOrigin;
         float _loopAngle;
+        Vector2 _previousPosition;
+        Vector2 _currentPosition;
 
         // Blocks
         readonly Vector2 _blockPosition = new Vector2();
@@ -80,6 +83,12 @@ namespace XnaHotWire
             // Start loop at outer left and middle height, add +50 to match wire
             _loopPosition.X = 0;
             _loopPosition.Y = _safeBounds.Height / 2 - _loopTexture.Height + 50;
+
+            // Set initial direction
+            _previousPosition = _loopPosition;
+            _currentPosition = _loopPosition;
+
+            _loopOrigin = _loopPosition;
         }
 
         /// <summary>
@@ -157,8 +166,10 @@ namespace XnaHotWire
 
             // Update angle
             //TODO: calculate angle
-            //_loopAngle;
-            //_loopDirection;
+            _currentPosition = _loopPosition;
+            _loopDirection = Vector2.Subtract(_currentPosition, _previousPosition);
+            _loopAngle = (float)Math.Atan2(_loopDirection.X, -_loopDirection.Y);
+            _previousPosition = _currentPosition;
 
             //  Check collision with the wire
             if (IntersectPixels(wireRectangle, _wireTextureData,
@@ -192,8 +203,10 @@ namespace XnaHotWire
 
             // Draw loop
             _spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
-            //TODO: rotate
-            //_spriteBatch.Draw(_loopTexture, _loopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            //TODO: rotate             
+            _spriteBatch.Draw(_loopTexture, _loopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            //Debug:
+            //Console.WriteLine(_loopAngle+"\t"+_currentPosition+"\t"+_previousPosition);                     
 
             // Draw wire 
             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
