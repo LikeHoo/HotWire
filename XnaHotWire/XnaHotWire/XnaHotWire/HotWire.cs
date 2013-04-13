@@ -80,15 +80,14 @@ namespace XnaHotWire
             // ReSharper restore PossibleLossOfFraction
             //_loopPosition.Y = _safeBounds.Height - _loopTexture.Height;
 
-            // Start loop at outer left and middle height, add +50 to match wire
+            // Start loop at outer left and middle height
             _loopPosition.X = 0;
-            _loopPosition.Y = _safeBounds.Height / 2 - _loopTexture.Height + 50;
+            _loopPosition.Y = _safeBounds.Height / 2 - _loopTexture.Height;
 
             // Set initial direction
             _previousPosition = _loopPosition;
             _currentPosition = _loopPosition;
-
-            _loopOrigin = _loopPosition;
+            _loopOrigin = new Vector2(0,0);
         }
 
         /// <summary>
@@ -98,7 +97,7 @@ namespace XnaHotWire
         {
             // Load textures
             _wireTexture = Content.Load<Texture2D>("Wire001");
-            _loopTexture = Content.Load<Texture2D>("Loop001");
+            _loopTexture = Content.Load<Texture2D>("Loop002");
 
             // Extract collision data
             _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
@@ -153,6 +152,7 @@ namespace XnaHotWire
 
             // Prevent the loop from moving off of the screen
             _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTexture.Width);
+            _loopPosition.Y = MathHelper.Clamp(_loopPosition.Y, _safeBounds.Top, _safeBounds.Bottom - _loopTexture.Height);
 
             // Get the bounding rectangle of the loop
             Rectangle loopRectangle = new Rectangle((int)_loopPosition.X, (int)_loopPosition.Y,
