@@ -87,7 +87,7 @@ namespace XnaHotWire
             // Set initial direction
             _previousPosition = _loopPosition;
             _currentPosition = _loopPosition;
-            _loopOrigin = new Vector2(0,0);
+
         }
 
         /// <summary>
@@ -108,6 +108,9 @@ namespace XnaHotWire
 
             // Create a sprite batch to draw those textures
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
+
+            // Set rotation center
+            _loopOrigin = new Vector2(_loopTexture.Width/2.0f, _loopTexture.Height/2.0f);
         }
 
         /// <summary>
