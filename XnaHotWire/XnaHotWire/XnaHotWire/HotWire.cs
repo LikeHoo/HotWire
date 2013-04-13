@@ -133,8 +133,9 @@ namespace XnaHotWire
             // Move the loop left and right with arrow keys or d-pad
             if (keyboard.IsKeyDown(Keys.Left) || gamePad.DPad.Left == ButtonState.Pressed)
             {
-                _loopPosition.X -= LoopMoveSpeed;
+                _loopPosition.X -= LoopMoveSpeed;                
             }
+            
 
             //Constant movement by always increasing position?
             if (keyboard.IsKeyDown(Keys.Right) || gamePad.DPad.Right == ButtonState.Pressed)
@@ -152,6 +153,10 @@ namespace XnaHotWire
             {
                 _loopPosition.Y += LoopMoveSpeed;
             }
+
+            // Analoge input for xbox360 controller
+            _loopPosition.X += gamePad.ThumbSticks.Left.X;
+            _loopPosition.Y -= gamePad.ThumbSticks.Left.Y;
 
             // Prevent the loop from moving off of the screen
             _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTexture.Width);
@@ -171,7 +176,7 @@ namespace XnaHotWire
             //TODO: calculate angle
             _currentPosition = _loopPosition;
             _loopDirection = Vector2.Subtract(_currentPosition, _previousPosition);
-            _loopAngle = (float)Math.Atan2(_loopDirection.X, -_loopDirection.Y);
+            _loopAngle = (float)(0.5*Math.PI) - (float)Math.Atan2(_loopDirection.X, _loopDirection.Y);
             _previousPosition = _currentPosition;
 
             //  Check collision with the wire
