@@ -80,7 +80,7 @@ namespace XnaHotWire
             // ReSharper restore PossibleLossOfFraction
             //_loopPosition.Y = _safeBounds.Height - _loopTexture.Height;
 
-            // Start loop at outer left and middle height
+            // Start loop at outer left and middle height.
             _loopPosition.X = 0;
             _loopPosition.Y = _safeBounds.Height / 2 - _loopTexture.Height;
 
