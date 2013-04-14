@@ -217,7 +217,7 @@ namespace XnaHotWire
             //TODO: rotate             
             _spriteBatch.Draw(_loopTexture, _loopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
             //Debug:
-            Console.WriteLine(_loopAngle + "\t" + _currentPosition + "\t" + _previousPosition);
+            //Console.WriteLine(_loopAngle + "\t" + _currentPosition + "\t" + _previousPosition);
 
             // Draw wire 
             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
