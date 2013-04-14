@@ -76,12 +76,6 @@ namespace XnaHotWire
                 (int)(viewport.Width * (1 - 2 * SafeAreaPortion)),
                 (int)(viewport.Height * (1 - 2 * SafeAreaPortion)));
 
-            // Start the loop in the center along the bottom of the screen
-            // ReSharper disable PossibleLossOfFraction
-            //_loopPosition.X = (_safeBounds.Width - _loopTexture.Width) / 2;            
-            // ReSharper restore PossibleLossOfFraction
-            //_loopPosition.Y = _safeBounds.Height - _loopTexture.Height;
-
             // Start loop at outer left and middle height.
             _loopPosition.X = 0;
             _loopPosition.Y = _safeBounds.Height / 2 - _loopTexture.Height;
@@ -193,8 +187,8 @@ namespace XnaHotWire
             _previousPosition.Y = _currentPosition.Y;
 
             //  Check collision with the wire
-            if (IntersectPixels(wireRectangle, _wireTextureData,
-                                    loopRectangle, _loopTextureData))
+            //if (IntersectPixels(wireRectangle, _wireTextureData, loopRectangle, _loopTextureData))
+            if (IntersectPixels(wireRectangle, _wireTextureData, collisionRectangle, _collisionTextureData))
             {
                 _loopHit = true;
             }
@@ -227,20 +221,20 @@ namespace XnaHotWire
             //TODO: rotate   
  
             //temp
-            Vector2 _rotateLoopPosition = new Vector2(0, 0);
-            _rotateLoopPosition.X = _loopPosition.X + _loopTexture.Width/2;
-            _rotateLoopPosition.Y = _loopPosition.Y + _loopTexture.Height/2;
+            Vector2 rotateLoopPosition = new Vector2(0, 0);
+            rotateLoopPosition.X = _loopPosition.X + _loopTexture.Width/2.0f;
+            rotateLoopPosition.Y = _loopPosition.Y + _loopTexture.Height/2.0f;
 
-            _spriteBatch.Draw(_loopTexture, _rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            _spriteBatch.Draw(_loopTexture, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
             //Debug:
             //Console.WriteLine(_loopAngle + "\t" + _currentPosition + "\t" + _previousPosition);
 
 
             //draw collision pic
             Vector2 collisionPosition = new Vector2(0,0);
-            collisionPosition.X = _loopPosition.X +(_loopTexture.Width/2) - (_collisionTexture.Width/2);
-            collisionPosition.Y = _loopPosition.Y +(_loopTexture.Height/2) - (_collisionTexture.Height/2);
-            _spriteBatch.Draw(_collisionTexture,collisionPosition,Color.White );
+            collisionPosition.X = _loopPosition.X +(_loopTexture.Width/2.0f) - (_collisionTexture.Width/2.0f);
+            collisionPosition.Y = _loopPosition.Y +(_loopTexture.Height/2.0f) - (_collisionTexture.Height/2.0f);
+            //_spriteBatch.Draw(_collisionTexture,collisionPosition,Color.White );
 
             // Draw wire 
             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
