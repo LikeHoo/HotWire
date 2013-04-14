@@ -173,7 +173,7 @@ namespace XnaHotWire
                 _loopTexture.Width, _loopTexture.Height);
 
             //Get the bounding rectangle of the collison
-            Rectangle collisionRectangle = new Rectangle((int)_loopPosition.X -(_loopTexture.Width/2), (int)_loopPosition.Y -(_loopTexture.Height/2),
+            Rectangle collisionRectangle = new Rectangle((int)_loopPosition.X +(_loopTexture.Width/2)-(_collisionTexture.Width/2), (int)_loopPosition.Y +(_loopTexture.Height/2) -(_collisionTexture.Height/2),
                 _collisionTexture.Width, _collisionTexture.Height);
 
             // Get the bounding rectangle of this block
@@ -223,9 +223,15 @@ namespace XnaHotWire
             _spriteBatch.Begin();
 
             // Draw loop
-            _spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
-            //TODO: rotate             
-            //_spriteBatch.Draw(_loopTexture, _loopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            //_spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
+            //TODO: rotate   
+ 
+            //temp
+            Vector2 _rotateLoopPosition = new Vector2(0, 0);
+            _rotateLoopPosition.X = _loopPosition.X + _loopTexture.Width/2;
+            _rotateLoopPosition.Y = _loopPosition.Y + _loopTexture.Height/2;
+
+            _spriteBatch.Draw(_loopTexture, _rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
             //Debug:
             //Console.WriteLine(_loopAngle + "\t" + _currentPosition + "\t" + _previousPosition);
 
