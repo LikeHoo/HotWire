@@ -16,7 +16,6 @@ namespace XnaHotWire
         // The images we will draw
         Texture2D _loopTexture;
         Texture2D _wireTexture;
-        Texture2D _line;
 
         // The color data for the images; used for per pixel collision
         Color[] _loopTextureData;
@@ -99,10 +98,6 @@ namespace XnaHotWire
             // Load textures
             _wireTexture = Content.Load<Texture2D>("Wire001");
             _loopTexture = Content.Load<Texture2D>("Loop002");
-
-            //
-            _line = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _line.SetData(new[] { Color.White });
 
             // Extract collision data
             _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
@@ -221,7 +216,6 @@ namespace XnaHotWire
             _spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
             //TODO: rotate             
             _spriteBatch.Draw(_loopTexture, _loopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
-            _spriteBatch.Draw(_line, _loopPosition, null, Color.White, (float)(_loopAngle - Math.PI / 2), Vector2.Zero, new Vector2(40, 2), SpriteEffects.None, 0);
             //Debug:
             Console.WriteLine(_loopAngle + "\t" + _currentPosition + "\t" + _previousPosition);
 
