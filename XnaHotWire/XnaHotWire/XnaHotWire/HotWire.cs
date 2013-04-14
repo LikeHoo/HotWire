@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -162,6 +161,12 @@ namespace XnaHotWire
             _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTexture.Width);
             _loopPosition.Y = MathHelper.Clamp(_loopPosition.Y, _safeBounds.Top, _safeBounds.Bottom - _loopTexture.Height);
 
+            // Goal reached?
+            if (_loopPosition.X > (_wireTexture.Width - 50))
+            {
+                TargetReached();
+            }
+
             // Get the bounding rectangle of the loop
             Rectangle loopRectangle = new Rectangle((int)_loopPosition.X, (int)_loopPosition.Y,
                 _loopTexture.Width, _loopTexture.Height);
@@ -284,6 +289,11 @@ namespace XnaHotWire
 
             // No intersection found
             return false;
+        }
+
+        private void TargetReached()
+        {
+            Console.WriteLine("Ziel erreicht!");
         }
     }
 }
