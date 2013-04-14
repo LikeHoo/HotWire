@@ -16,10 +16,12 @@ namespace XnaHotWire
         // The images we will draw
         Texture2D _loopTexture;
         Texture2D _wireTexture;
+        Texture2D _collisionTexture;
 
         // The color data for the images; used for per pixel collision
         Color[] _loopTextureData;
         Color[] _wireTextureData;
+        Color[] _collisionTextureData;
 
         // The images will be drawn with this SpriteBatch
         SpriteBatch _spriteBatch;
@@ -98,6 +100,7 @@ namespace XnaHotWire
             // Load textures
             _wireTexture = Content.Load<Texture2D>("Wire001");
             _loopTexture = Content.Load<Texture2D>("Loop002");
+            _collisionTexture = Content.Load<Texture2D>("Collision001");
 
             // Extract collision data
             _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
@@ -105,6 +108,9 @@ namespace XnaHotWire
 
             _loopTextureData = new Color[_loopTexture.Width * _loopTexture.Height];
             _loopTexture.GetData(_loopTextureData);
+
+            _collisionTextureData = new Color[_collisionTexture.Width*_collisionTexture.Height];
+            _collisionTexture.GetData(_collisionTextureData);
 
             // Create a sprite batch to draw those textures
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
@@ -166,6 +172,10 @@ namespace XnaHotWire
             Rectangle loopRectangle = new Rectangle((int)_loopPosition.X, (int)_loopPosition.Y,
                 _loopTexture.Width, _loopTexture.Height);
 
+            //Get the bounding rectangle of the collison
+            Rectangle collisionRectangle = new Rectangle((int)_loopPosition.X -(_loopTexture.Width/2), (int)_loopPosition.Y -(_loopTexture.Height/2),
+                _collisionTexture.Width, _collisionTexture.Height);
+
             // Get the bounding rectangle of this block
             Rectangle wireRectangle = new Rectangle(0, 0, _wireTexture.Width, _wireTexture.Height);
 
@@ -215,9 +225,16 @@ namespace XnaHotWire
             // Draw loop
             _spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
             //TODO: rotate             
-            _spriteBatch.Draw(_loopTexture, _loopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            //_spriteBatch.Draw(_loopTexture, _loopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
             //Debug:
             //Console.WriteLine(_loopAngle + "\t" + _currentPosition + "\t" + _previousPosition);
+
+
+            //draw collision pic
+            Vector2 collisionPosition = new Vector2(0,0);
+            collisionPosition.X = _loopPosition.X +(_loopTexture.Width/2) - (_collisionTexture.Width/2);
+            collisionPosition.Y = _loopPosition.Y +(_loopTexture.Height/2) - (_collisionTexture.Height/2);
+            _spriteBatch.Draw(_collisionTexture,collisionPosition,Color.White );
 
             // Draw wire 
             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
