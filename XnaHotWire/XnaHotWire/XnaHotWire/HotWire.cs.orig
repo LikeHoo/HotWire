@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -15,40 +13,37 @@ namespace XnaHotWire
         readonly GraphicsDeviceManager _graphics;
 
         // The images we will draw
-        private Texture2D _loopTexture;
-        private Texture2D _wireTexture;
-        private Texture2D _collisionTexture;
-        private Texture2D _backGroundTexture;
-        private Texture2D _backGroundTextureWarning;
+        Texture2D _loopTexture;
+        Texture2D _wireTexture;
+        Texture2D _collisionTexture;
 
         // The color data for the images; used for per pixel collision
-        private Color[] _loopTextureData;
-        private Color[] _wireTextureData;
-        private Color[] _collisionTextureData;
+        Color[] _loopTextureData;
+        Color[] _wireTextureData;
+        Color[] _collisionTextureData;
 
         // The images will be drawn with this SpriteBatch
-        private SpriteBatch _spriteBatch;
+        SpriteBatch _spriteBatch;
 
         // positions 
-        private Vector2 _loopPosition;
-        private const int LoopMoveSpeed = 2;
+        Vector2 _loopPosition;
+        const int LoopMoveSpeed = 2;
 
         // direction
-        private Vector2 _loopDirection;
-        private Vector2 _loopOrigin;
-        private float _loopAngle;
-        private Vector2 _previousPosition;
-        private Vector2 _currentPosition;
+        Vector2 _loopDirection;
+        Vector2 _loopOrigin;
+        float _loopAngle;
+        Vector2 _previousPosition;
+        Vector2 _currentPosition;
 
         // Blocks
-        private readonly Vector2 _blockPosition = new Vector2();
+        readonly Vector2 _blockPosition = new Vector2();
 
         // For when a collision is detected
-        private bool _loopHit;
-        private bool _gameLost;
+        bool _loopHit;
 
         // The sub-rectangle of the drawable area which should be visible on all TVs
-        private Rectangle _safeBounds;
+        Rectangle _safeBounds;
 
         // Percentage of the screen on every side is the safe area
         private const float SafeAreaPortion = 0.00f;//old value 0.05f
@@ -60,9 +55,6 @@ namespace XnaHotWire
 
             _graphics.PreferredBackBufferWidth = 1024;
             _graphics.PreferredBackBufferHeight = 600;
-
-            // wird für die MessageBox benötigt!
-            Components.Add(new GamerServicesComponent(this));
         }
 
         /// <summary>
@@ -102,9 +94,6 @@ namespace XnaHotWire
             _wireTexture = Content.Load<Texture2D>("Wire001");
             _loopTexture = Content.Load<Texture2D>("Loop002");
             _collisionTexture = Content.Load<Texture2D>("Collision001");
-
-            _backGroundTexture = Content.Load<Texture2D>("BG_Cloudy");
-            _backGroundTextureWarning = Content.Load<Texture2D>("BG_Cloudy_Red");
 
             // Extract collision data
             _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
@@ -178,6 +167,10 @@ namespace XnaHotWire
                 TargetReached();
             }
 
+            // Get the bounding rectangle of the loop
+            Rectangle loopRectangle = new Rectangle((int)_loopPosition.X, (int)_loopPosition.Y,
+                _loopTexture.Width, _loopTexture.Height);
+
             //Get the bounding rectangle of the collison
             Rectangle collisionRectangle = new Rectangle((int)_loopPosition.X +(_loopTexture.Width/2)-(_collisionTexture.Width/2), (int)_loopPosition.Y +(_loopTexture.Height/2) -(_collisionTexture.Height/2),
                 _collisionTexture.Width, _collisionTexture.Height);
@@ -214,25 +207,24 @@ namespace XnaHotWire
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin();
+            GraphicsDevice device = _graphics.GraphicsDevice;
 
             // Change the background to red when the wire was hit by a block
-            if (_loopHit && !_gameLost)
+<<<<<<< HEAD
+            if (!_personHit)
+=======
+            if (_loopHit)
+>>>>>>> 9a54e162f1fac9235d24a76ecced958102be762e
             {
-                _spriteBatch.Draw(_backGroundTexture, _blockPosition, Color.White);
+                device.Clear(Color.CornflowerBlue);
             }
             else
             {
-                _spriteBatch.Draw(_backGroundTextureWarning, _blockPosition, Color.White);
-
-                if (!_gameLost)
-                {
-                    SimpleMessageBox.ShowMessageBox("LOOOOOSER", "Drehe die Potentiomenter zurück um neu zu starten!",
-                                                    new[] {"OK"}, 0, MessageBoxIcon.None);
-                    _gameLost = true;
-                }
+                device.Clear(Color.Red);
             }
-           
+
+            _spriteBatch.Begin();
+
             // Draw loop
             //_spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
             //TODO: rotate   
@@ -243,8 +235,19 @@ namespace XnaHotWire
             rotateLoopPosition.Y = _loopPosition.Y + _loopTexture.Height/2.0f;
 
             _spriteBatch.Draw(_loopTexture, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            //Debug:
+            //Console.WriteLine(_loopAngle + "\t" + _currentPosition + "\t" + _previousPosition);
+
+
+            //draw collision pic
+            Vector2 collisionPosition = new Vector2(0,0);
+            collisionPosition.X = _loopPosition.X +(_loopTexture.Width/2.0f) - (_collisionTexture.Width/2.0f);
+            collisionPosition.Y = _loopPosition.Y +(_loopTexture.Height/2.0f) - (_collisionTexture.Height/2.0f);
+            //_spriteBatch.Draw(_collisionTexture,collisionPosition,Color.White );
+
+            // Draw wire 
             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
-           
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -294,8 +297,7 @@ namespace XnaHotWire
 
         private void TargetReached()
         {
-            SimpleMessageBox.ShowMessageBox("Winner!", "Drehe die Potentiomenter zurück um neu zu starten!",
-                                                    new[] { "OK" }, 0, MessageBoxIcon.None);
+            Console.WriteLine("Ziel erreicht!");
         }
     }
 }
