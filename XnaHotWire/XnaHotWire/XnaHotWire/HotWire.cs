@@ -15,29 +15,38 @@ namespace XnaHotWire
         // The images we will draw
         Texture2D _loopTexture;
         Texture2D _wireTexture;
+        Texture2D _collisionTexture;
 
         // The color data for the images; used for per pixel collision
         Color[] _loopTextureData;
         Color[] _wireTextureData;
+        Color[] _collisionTextureData;
 
         // The images will be drawn with this SpriteBatch
         SpriteBatch _spriteBatch;
 
         // positions 
         Vector2 _loopPosition;
-        const int PersonMoveSpeed = 5;
+        const int LoopMoveSpeed = 2;
+
+        // direction
+        Vector2 _loopDirection;
+        Vector2 _loopOrigin;
+        float _loopAngle;
+        Vector2 _previousPosition;
+        Vector2 _currentPosition;
 
         // Blocks
         readonly Vector2 _blockPosition = new Vector2();
 
         // For when a collision is detected
-        bool _personHit;
+        bool _loopHit;
 
         // The sub-rectangle of the drawable area which should be visible on all TVs
         Rectangle _safeBounds;
 
         // Percentage of the screen on every side is the safe area
-        const float SafeAreaPortion = 0.05f;
+        private const float SafeAreaPortion = 0.00f;//old value 0.05f
 
         public HotWire()
         {
@@ -66,11 +75,14 @@ namespace XnaHotWire
                 (int)(viewport.Width * (1 - 2 * SafeAreaPortion)),
                 (int)(viewport.Height * (1 - 2 * SafeAreaPortion)));
 
-            // Start the player in the center along the bottom of the screen
-// ReSharper disable PossibleLossOfFraction
-            _loopPosition.X = (_safeBounds.Width - _loopTexture.Width) / 2;
-// ReSharper restore PossibleLossOfFraction
-            _loopPosition.Y = _safeBounds.Height - _loopTexture.Height;
+            // Start loop at outer left and middle height.
+            _loopPosition.X = 0;
+            _loopPosition.Y = _safeBounds.Height / 2 - _loopTexture.Height;
+
+            // Set initial direction
+            _previousPosition = _loopPosition;
+            _currentPosition = _loopPosition;
+
         }
 
         /// <summary>
@@ -79,8 +91,9 @@ namespace XnaHotWire
         protected override void LoadContent()
         {
             // Load textures
-            _wireTexture = Content.Load<Texture2D>("Wire");
-            _loopTexture = Content.Load<Texture2D>("Loop");
+            _wireTexture = Content.Load<Texture2D>("Wire001");
+            _loopTexture = Content.Load<Texture2D>("Loop002");
+            _collisionTexture = Content.Load<Texture2D>("Collision001");
 
             // Extract collision data
             _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
@@ -89,8 +102,14 @@ namespace XnaHotWire
             _loopTextureData = new Color[_loopTexture.Width * _loopTexture.Height];
             _loopTexture.GetData(_loopTextureData);
 
+            _collisionTextureData = new Color[_collisionTexture.Width*_collisionTexture.Height];
+            _collisionTexture.GetData(_collisionTextureData);
+
             // Create a sprite batch to draw those textures
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
+
+            // Set rotation center
+            _loopOrigin = new Vector2(_loopTexture.Width / 2.0f, _loopTexture.Height / 2.0f);
         }
 
         /// <summary>
@@ -110,45 +129,73 @@ namespace XnaHotWire
                 Exit();
             }
 
-            // Move the player left and right with arrow keys or d-pad
+            // Move the loop left and right with arrow keys or d-pad
             if (keyboard.IsKeyDown(Keys.Left) || gamePad.DPad.Left == ButtonState.Pressed)
             {
-                _loopPosition.X -= PersonMoveSpeed;
+                _loopPosition.X -= LoopMoveSpeed;
             }
 
+
+            //Constant movement by always increasing position?
             if (keyboard.IsKeyDown(Keys.Right) || gamePad.DPad.Right == ButtonState.Pressed)
             {
-                _loopPosition.X += PersonMoveSpeed;
+                _loopPosition.X += LoopMoveSpeed;
             }
 
-            if (keyboard.IsKeyDown(Keys.Up) || gamePad.DPad.Right == ButtonState.Pressed)
+            // Move the loop up and down with arrow keys or d-pad
+            if (keyboard.IsKeyDown(Keys.Up) || gamePad.DPad.Up == ButtonState.Pressed)
             {
-                _loopPosition.Y -= PersonMoveSpeed;
+                _loopPosition.Y -= LoopMoveSpeed;
             }
 
-            if (keyboard.IsKeyDown(Keys.Down) || gamePad.DPad.Right == ButtonState.Pressed)
+            if (keyboard.IsKeyDown(Keys.Down) || gamePad.DPad.Down == ButtonState.Pressed)
             {
-                _loopPosition.Y += PersonMoveSpeed;
+                _loopPosition.Y += LoopMoveSpeed;
             }
 
-            // Prevent the person from moving off of the screen
+            // Analoge input for xbox360 controller
+            _loopPosition.X += gamePad.ThumbSticks.Left.X;
+            _loopPosition.Y -= gamePad.ThumbSticks.Left.Y;
+
+            // Prevent the loop from moving off of the screen
             _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTexture.Width);
+            _loopPosition.Y = MathHelper.Clamp(_loopPosition.Y, _safeBounds.Top, _safeBounds.Bottom - _loopTexture.Height);
 
-            // Get the bounding rectangle of the person
+            // Goal reached?
+            if (_loopPosition.X > (_wireTexture.Width - 50))
+            {
+                TargetReached();
+            }
+
+            // Get the bounding rectangle of the loop
             Rectangle loopRectangle = new Rectangle((int)_loopPosition.X, (int)_loopPosition.Y,
                 _loopTexture.Width, _loopTexture.Height);
+
+            //Get the bounding rectangle of the collison
+            Rectangle collisionRectangle = new Rectangle((int)_loopPosition.X +(_loopTexture.Width/2)-(_collisionTexture.Width/2), (int)_loopPosition.Y +(_loopTexture.Height/2) -(_collisionTexture.Height/2),
+                _collisionTexture.Width, _collisionTexture.Height);
 
             // Get the bounding rectangle of this block
             Rectangle wireRectangle = new Rectangle(0, 0, _wireTexture.Width, _wireTexture.Height);
 
             // Update each block
-            _personHit = false;
+            _loopHit = false;
 
-           //  Check collision with the wire
-            if (IntersectPixels(wireRectangle, _wireTextureData,
-                                    loopRectangle, _loopTextureData))
+            // Update angle
+            //TODO: calculate angle
+            _currentPosition = _loopPosition;
+            _loopDirection = Vector2.Subtract(_currentPosition, _previousPosition);
+            _loopAngle = (float)(0.5 * Math.PI) - (float)Math.Atan2(_loopDirection.X, _loopDirection.Y);
+
+            // Set new previous position, subtracting 0.001 to avoid zero-vector
+            _previousPosition.X = _currentPosition.X - 0.001f;
+            _previousPosition.Y = _currentPosition.Y;
+
+            //  Check collision with the wire
+            //if (IntersectPixels(wireRectangle, _wireTextureData, loopRectangle, _loopTextureData))
+            if (IntersectPixels(wireRectangle, _wireTextureData, collisionRectangle, _collisionTextureData))
             {
-                _personHit = true;
+                _loopHit = true;
             }
 
             base.Update(gameTime);
@@ -163,22 +210,39 @@ namespace XnaHotWire
             GraphicsDevice device = _graphics.GraphicsDevice;
 
             // Change the background to red when the wire was hit by a block
-            if (!_personHit)
+            if (_loopHit)
             {
-                device.Clear(Color.Red);
+                device.Clear(Color.CornflowerBlue);
             }
             else
             {
-                device.Clear(Color.CornflowerBlue);
+                device.Clear(Color.Red);
             }
 
             _spriteBatch.Begin();
 
             // Draw loop
-            _spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
+            //_spriteBatch.Draw(_loopTexture, _loopPosition, Color.White);
+            //TODO: rotate   
+ 
+            //temp
+            Vector2 rotateLoopPosition = new Vector2(0, 0);
+            rotateLoopPosition.X = _loopPosition.X + _loopTexture.Width/2.0f;
+            rotateLoopPosition.Y = _loopPosition.Y + _loopTexture.Height/2.0f;
+
+            _spriteBatch.Draw(_loopTexture, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            //Debug:
+            //Console.WriteLine(_loopAngle + "\t" + _currentPosition + "\t" + _previousPosition);
+
+
+            //draw collision pic
+            Vector2 collisionPosition = new Vector2(0,0);
+            collisionPosition.X = _loopPosition.X +(_loopTexture.Width/2.0f) - (_collisionTexture.Width/2.0f);
+            collisionPosition.Y = _loopPosition.Y +(_loopTexture.Height/2.0f) - (_collisionTexture.Height/2.0f);
+            //_spriteBatch.Draw(_collisionTexture,collisionPosition,Color.White );
 
             // Draw wire 
-             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
+            _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
 
             _spriteBatch.End();
 
@@ -225,6 +289,11 @@ namespace XnaHotWire
 
             // No intersection found
             return false;
+        }
+
+        private void TargetReached()
+        {
+            Console.WriteLine("Ziel erreicht!");
         }
     }
 }
