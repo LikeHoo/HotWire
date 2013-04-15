@@ -163,7 +163,7 @@ namespace XnaHotWire
             GraphicsDevice device = _graphics.GraphicsDevice;
 
             // Change the background to red when the wire was hit by a block
-            if (_personHit)
+            if (!_personHit)
             {
                 device.Clear(Color.Red);
             }
