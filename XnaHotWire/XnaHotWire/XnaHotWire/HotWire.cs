@@ -15,7 +15,8 @@ namespace XnaHotWire
         readonly GraphicsDeviceManager _graphics;
 
         // The images we will draw
-        private Texture2D _loopTexture;
+        private Texture2D _loopTextureLeft;
+        private Texture2D _loopTextureRight;
         private Texture2D _wireTexture;
         private Texture2D _collisionTexture;
         private Texture2D _backGroundTexture;
@@ -85,7 +86,7 @@ namespace XnaHotWire
 
             // Start loop at outer left and middle height.
             _loopPosition.X = 0;
-            _loopPosition.Y = _safeBounds.Height / 2 - _loopTexture.Height;
+            _loopPosition.Y = _safeBounds.Height / 2 - _loopTextureLeft.Height;
 
             // Set initial direction
             _previousPosition = _loopPosition;
@@ -99,8 +100,9 @@ namespace XnaHotWire
         protected override void LoadContent()
         {
             // Load textures
-            _wireTexture = Content.Load<Texture2D>("Wire001");
-            _loopTexture = Content.Load<Texture2D>("Loop002");
+            _wireTexture = Content.Load<Texture2D>("Wire002");
+            _loopTextureLeft = Content.Load<Texture2D>("Loop003_links");
+            _loopTextureRight = Content.Load<Texture2D>("Loop003_rechts");
             _collisionTexture = Content.Load<Texture2D>("Collision001");
 
             _backGroundTexture = Content.Load<Texture2D>("BG_Cloudy");
@@ -110,8 +112,8 @@ namespace XnaHotWire
             _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
             _wireTexture.GetData(_wireTextureData);
 
-            _loopTextureData = new Color[_loopTexture.Width * _loopTexture.Height];
-            _loopTexture.GetData(_loopTextureData);
+            _loopTextureData = new Color[_loopTextureLeft.Width * _loopTextureLeft.Height];
+            _loopTextureLeft.GetData(_loopTextureData);
 
             _collisionTextureData = new Color[_collisionTexture.Width*_collisionTexture.Height];
             _collisionTexture.GetData(_collisionTextureData);
@@ -120,7 +122,7 @@ namespace XnaHotWire
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
 
             // Set rotation center
-            _loopOrigin = new Vector2(_loopTexture.Width / 2.0f, _loopTexture.Height / 2.0f);
+            _loopOrigin = new Vector2(_loopTextureLeft.Width / 2.0f, _loopTextureLeft.Height / 2.0f);
         }
 
         /// <summary>
@@ -169,8 +171,8 @@ namespace XnaHotWire
             _loopPosition.Y -= gamePad.ThumbSticks.Left.Y;
 
             // Prevent the loop from moving off of the screen
-            _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTexture.Width);
-            _loopPosition.Y = MathHelper.Clamp(_loopPosition.Y, _safeBounds.Top, _safeBounds.Bottom - _loopTexture.Height);
+            _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTextureLeft.Width);
+            _loopPosition.Y = MathHelper.Clamp(_loopPosition.Y, _safeBounds.Top, _safeBounds.Bottom - _loopTextureLeft.Height);
 
             // Goal reached?
             if (_loopPosition.X > (_wireTexture.Width - 50))
@@ -179,7 +181,7 @@ namespace XnaHotWire
             }
 
             //Get the bounding rectangle of the collison
-            Rectangle collisionRectangle = new Rectangle((int)_loopPosition.X +(_loopTexture.Width/2)-(_collisionTexture.Width/2), (int)_loopPosition.Y +(_loopTexture.Height/2) -(_collisionTexture.Height/2),
+            Rectangle collisionRectangle = new Rectangle((int)_loopPosition.X +(_loopTextureLeft.Width/2)-(_collisionTexture.Width/2), (int)_loopPosition.Y +(_loopTextureLeft.Height/2) -(_collisionTexture.Height/2),
                 _collisionTexture.Width, _collisionTexture.Height);
 
             // Get the bounding rectangle of this block
@@ -239,11 +241,12 @@ namespace XnaHotWire
  
             //temp
             Vector2 rotateLoopPosition = new Vector2(0, 0);
-            rotateLoopPosition.X = _loopPosition.X + _loopTexture.Width/2.0f;
-            rotateLoopPosition.Y = _loopPosition.Y + _loopTexture.Height/2.0f;
+            rotateLoopPosition.X = _loopPosition.X + _loopTextureLeft.Width/2.0f;
+            rotateLoopPosition.Y = _loopPosition.Y + _loopTextureLeft.Height/2.0f;
 
-            _spriteBatch.Draw(_loopTexture, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            _spriteBatch.Draw(_loopTextureLeft, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
+            _spriteBatch.Draw(_loopTextureRight, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
            
             _spriteBatch.End();
 
