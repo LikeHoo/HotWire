@@ -54,6 +54,9 @@ namespace XnaHotWire
         // Percentage of the screen on every side is the safe area
         private const float SafeAreaPortion = 0.00f;//old value 0.05f
 
+        //SerialInput
+        private SerialInput _serialInput;
+
         public HotWire()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -64,6 +67,9 @@ namespace XnaHotWire
 
             // wird für die MessageBox benötigt!
             Components.Add(new GamerServicesComponent(this));
+
+            //SerialInput
+            _serialInput = new SerialInput();
         }
 
         /// <summary>
@@ -169,6 +175,10 @@ namespace XnaHotWire
             // Analoge input for xbox360 controller
             _loopPosition.X += gamePad.ThumbSticks.Left.X;
             _loopPosition.Y -= gamePad.ThumbSticks.Left.Y;
+
+            // Get input from serial controller
+            _loopPosition.X += _serialInput.GetPositionX();
+            _loopPosition.Y -= _serialInput.GetPositionY();
 
             // Prevent the loop from moving off of the screen
             _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTextureLeft.Width);
