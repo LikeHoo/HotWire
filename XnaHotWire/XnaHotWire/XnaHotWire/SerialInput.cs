@@ -14,11 +14,11 @@ namespace XnaHotWire
         private readonly SerialPort _serialport;
         private String _lastMessage;
 
-        public SerialInput()
+        public SerialInput(string comPort)
         {            
             try
             {
-                _serialport = new SerialPort("COM5")
+                _serialport = new SerialPort(comPort)
                 {
                     BaudRate = 9600,
                     Parity = Parity.None,
