@@ -44,7 +44,8 @@ namespace XnaHotWire
         private void SerialportOnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
-            _lastMessage = sp.ReadExisting();              
+            _lastMessage = sp.ReadExisting();
+            System.Console.WriteLine(_lastMessage);
         }
 
         private void SendData(String message)
