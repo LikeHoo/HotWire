@@ -45,6 +45,7 @@ namespace XnaHotWire
         {
             SerialPort sp = (SerialPort)sender;
             _lastMessage = sp.ReadExisting();
+            
             System.Console.WriteLine(_lastMessage);
         }
 
