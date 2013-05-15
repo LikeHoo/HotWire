@@ -70,6 +70,7 @@ namespace XnaHotWire
 
             //SerialInput
             _serialInput = new SerialInput("COM3");
+
         }
 
         /// <summary>
