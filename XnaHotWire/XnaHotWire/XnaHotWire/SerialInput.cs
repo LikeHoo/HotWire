@@ -7,7 +7,7 @@ using System.IO.Ports;
 
 namespace XnaHotWire
 {
-    class SerialInput
+    public class SerialInput
     {
         private int _valueX;
         private int _valueY;
@@ -86,17 +86,21 @@ namespace XnaHotWire
                 string strX = "" + x[0] + x[1];
                 try
                 {
-                    _valueX = Int32.Parse(strX, System.Globalization.NumberStyles.HexNumber);
+                    _valueX = Int32.Parse(strX, NumberStyles.HexNumber);
+
+                    if (InvertX)
+                    {
+                        _valueX = (_valueX - 255)*-1;
+                    }
                 }
                 catch (System.FormatException)
                 {
 
-
                 }
-
             }
+
             //debug
-            System.Console.Write("X_:{0}  ", _valueX);
+            Console.Write("X_:{0}  ", _valueX);
 
             return (float)(_valueX-128)/64;
         }
@@ -112,6 +116,11 @@ namespace XnaHotWire
                 try
                 {
                     _valueY = Int32.Parse(strY, System.Globalization.NumberStyles.HexNumber);
+
+                    if (InvertY)
+                    {
+                        _valueY = (_valueY - 255) * -1;
+                    }
                 }
                 catch (System.FormatException)
                 {
@@ -127,5 +136,9 @@ namespace XnaHotWire
         {
             SendData(value.ToString());
         }
+
+        public bool InvertX { get; set; }
+
+        public bool InvertY { get; set; }
     }
 }

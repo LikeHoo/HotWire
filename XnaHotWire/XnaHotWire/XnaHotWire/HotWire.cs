@@ -58,7 +58,7 @@ namespace XnaHotWire
         //SerialInput
         private readonly SerialInput _serialInput;
 
-        public HotWire(string comPort)
+        public HotWire(SerialInput serialInput)
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -69,10 +69,7 @@ namespace XnaHotWire
             // wird für die MessageBox benötigt!
             Components.Add(new GamerServicesComponent(this));
 
-            //SerialInput
-            _serialInput = new SerialInput(comPort);
-            _serialInput.SendData("g 8000\r\n");
-
+            _serialInput = serialInput;
         }
 
         /// <summary>
