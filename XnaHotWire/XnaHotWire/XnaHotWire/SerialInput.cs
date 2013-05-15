@@ -41,11 +41,30 @@ namespace XnaHotWire
             _serialport.Close();
         }
 
+        private string _buffer = string.Empty;
+
         private void SerialportOnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPort sp = (SerialPort)sender;
-            _lastMessage = sp.ReadExisting();
+            SerialPort sp = (SerialPort) sender;
+
+            string temp = sp.ReadExisting();
+            // _lastMessage = sp.ReadExisting();
+
+            if (_buffer.Length < 10)
+            {
+                _buffer += temp;
+                return;
+            }
+
+            string[] values = _buffer.Split(new[] {":"}, StringSplitOptions.RemoveEmptyEntries);
+
+            if (values.Length > 0)
+            {
+                _lastMessage = values[0];
+                _buffer = string.Empty;
+            }
         }
+
 
         public void SendData(String message)
         {
@@ -61,7 +80,7 @@ namespace XnaHotWire
 
         public float GetPositionX()
         {
-            if (_lastMessage != null && _lastMessage.Length == 4 && !_lastMessage.Contains(":"))
+            if (_lastMessage != null && _lastMessage.Length == 4)
             {
                 Char[] x = _lastMessage.ToCharArray();
                 string strX = "" + x[0] + x[1];
@@ -84,7 +103,7 @@ namespace XnaHotWire
 
         public float GetPositionY()
         {
-            if (_lastMessage != null && _lastMessage.Length == 4 && !_lastMessage.Contains(":"))
+            if (_lastMessage != null && _lastMessage.Length == 4)
             {
 
                 Char[] y = _lastMessage.ToCharArray();

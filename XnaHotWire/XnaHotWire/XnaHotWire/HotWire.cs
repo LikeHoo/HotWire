@@ -71,7 +71,7 @@ namespace XnaHotWire
 
             //SerialInput
             _serialInput = new SerialInput(comPort);
-            //_serialInput.SendData("g 8000/r/n");
+            _serialInput.SendData("g 8000\r\n");
 
         }
 
