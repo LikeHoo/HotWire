@@ -47,7 +47,7 @@ namespace XnaHotWire
             _lastMessage = sp.ReadExisting();
         }
 
-        private void SendData(String message)
+        public void SendData(String message)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace XnaHotWire
             }
         }
 
-        public int GetPositionX()
+        public float GetPositionX()
         {
             //todo: convert _lastMessage
             if (_lastMessage != null && _lastMessage.Length == 4 && !_lastMessage.Contains(":"))
@@ -79,10 +79,10 @@ namespace XnaHotWire
 
             }
 
-            return _valueX;
+            return (float)(_valueX-128)/64;
         }
 
-        public int GetPositionY()
+        public float GetPositionY()
         {
             if (_lastMessage != null && _lastMessage.Length == 4 && !_lastMessage.Contains(":"))
             {
@@ -100,7 +100,7 @@ namespace XnaHotWire
                     throw;
                 }
             }
-            return _valueY;
+            return (float)(_valueY-128)/64;
         }
 
         public void ControlLed(int value)
