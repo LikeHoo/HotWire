@@ -56,7 +56,7 @@ namespace XnaHotWire
         private const float SafeAreaPortion = 0.00f;//old value 0.05f
 
         //SerialInput
-        private SerialInput _serialInput;
+        private readonly SerialInput _serialInput;
 
         public HotWire(string comPort)
         {
@@ -71,7 +71,7 @@ namespace XnaHotWire
 
             //SerialInput
             _serialInput = new SerialInput(comPort);
-            _serialInput.SendData("g 8000\r\n");
+            //_serialInput.SendData("g 8000/r/n");
 
         }
 
@@ -109,7 +109,7 @@ namespace XnaHotWire
         protected override void LoadContent()
         {
             // Load textures
-            _wireTexture = Content.Load<Texture2D>("Wire002");
+            _wireTexture = Content.Load<Texture2D>("Wire003");
             _loopTextureLeft = Content.Load<Texture2D>("Loop003_links");
             _loopTextureRight = Content.Load<Texture2D>("Loop003_rechts");
             _collisionTexture = Content.Load<Texture2D>("Collision001");
@@ -176,12 +176,17 @@ namespace XnaHotWire
             }
 
             // Analoge input for xbox360 controller
-            _loopPosition.X += gamePad.ThumbSticks.Left.X;
-            _loopPosition.Y -= gamePad.ThumbSticks.Left.Y;
+            //_loopPosition.X += gamePad.ThumbSticks.Left.X;
+            //_loopPosition.Y -= gamePad.ThumbSticks.Left.Y;
 
             // Get input from serial controller
-            _loopPosition.X += _serialInput.GetPositionX();
-            _loopPosition.Y -= _serialInput.GetPositionY();
+            //debug
+            float xx = _serialInput.GetPositionX();
+            float yy = _serialInput.GetPositionY();
+            System.Console.Write("X:{0}  ",xx);
+            System.Console.WriteLine("Y:{0}",yy);
+            _loopPosition.X += xx;//_serialInput.GetPositionX();
+            _loopPosition.Y -= yy;//_serialInput.GetPositionY();
 
             // Prevent the loop from moving off of the screen
             _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTextureLeft.Width);
