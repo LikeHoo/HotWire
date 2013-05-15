@@ -96,8 +96,6 @@ namespace XnaHotWire
                 }
                 catch (System.FormatException)
                 {
-
-                    throw;
                 }
             }
             return (float)(_valueY-128)/64;
