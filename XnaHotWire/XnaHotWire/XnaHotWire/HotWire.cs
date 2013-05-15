@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Xml.Linq;
 
 namespace XnaHotWire
 {
@@ -56,7 +58,7 @@ namespace XnaHotWire
         //SerialInput
         private SerialInput _serialInput;
 
-        public HotWire()
+        public HotWire(string comPort)
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -68,7 +70,7 @@ namespace XnaHotWire
             Components.Add(new GamerServicesComponent(this));
 
             //SerialInput
-            _serialInput = new SerialInput("COM3");
+            _serialInput = new SerialInput(comPort);
 
         }
 
