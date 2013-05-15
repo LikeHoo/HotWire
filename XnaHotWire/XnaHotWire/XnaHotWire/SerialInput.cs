@@ -78,6 +78,8 @@ namespace XnaHotWire
                 }
 
             }
+            //debug
+            System.Console.Write("X_:{0}  ", _valueX);
 
             return (float)(_valueX-128)/64;
         }
@@ -98,6 +100,9 @@ namespace XnaHotWire
                 {
                 }
             }
+            //debug
+            System.Console.Write("Y_:{0}  ", _valueY);
+
             return (float)(_valueY-128)/64;
         }
 
