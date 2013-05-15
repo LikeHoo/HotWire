@@ -68,7 +68,7 @@ namespace XnaHotWire
             Components.Add(new GamerServicesComponent(this));
 
             //SerialInput
-            _serialInput = new SerialInput("COM 3");
+            _serialInput = new SerialInput("COM3");
         }
 
         /// <summary>

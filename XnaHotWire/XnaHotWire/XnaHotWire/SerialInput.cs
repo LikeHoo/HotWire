@@ -15,12 +15,12 @@ namespace XnaHotWire
         private String _lastMessage;
 
         public SerialInput(string comPort)
-        {            
+        {
             try
             {
                 _serialport = new SerialPort(comPort)
                 {
-                    BaudRate = 9600,
+                    BaudRate = 19200,
                     Parity = Parity.None,
                     StopBits = StopBits.One,
                     DataBits = 8,
@@ -38,13 +38,13 @@ namespace XnaHotWire
 
         ~SerialInput()
         {
-            _serialport.Close();    
+            _serialport.Close();
         }
 
         private void SerialportOnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
-            _lastMessage = sp.ReadExisting();              
+            _lastMessage = sp.ReadExisting();
         }
 
         private void SendData(String message)
@@ -55,7 +55,7 @@ namespace XnaHotWire
                 _serialport.Write(message);
             }
             catch (Exception e)
-            {                
+            {
                 throw new Exception("Exception: SerialPort\n" + e.Message);
             }
         }
@@ -63,16 +63,43 @@ namespace XnaHotWire
         public int GetPositionX()
         {
             //todo: convert _lastMessage
+            if (_lastMessage != null && _lastMessage.Length == 4 && !_lastMessage.Contains(":"))
+            {
+                Char[] x = _lastMessage.ToCharArray();
+                string strX = "" + x[0] + x[1];
+                try
+                {
+                    _valueX = Int32.Parse(strX, System.Globalization.NumberStyles.HexNumber);
+                }
+                catch (System.FormatException)
+                {
 
+
+                }
+
+            }
 
             return _valueX;
         }
 
         public int GetPositionY()
         {
-            //todo: convert _lastMessage
+            if (_lastMessage != null && _lastMessage.Length == 4 && !_lastMessage.Contains(":"))
+            {
 
+                Char[] y = _lastMessage.ToCharArray();
+                string strY = "" + y[2] + y[3];
 
+                try
+                {
+                    _valueY = Int32.Parse(strY, System.Globalization.NumberStyles.HexNumber);
+                }
+                catch (System.FormatException)
+                {
+
+                    throw;
+                }
+            }
             return _valueY;
         }
 
