@@ -109,7 +109,7 @@ namespace XnaHotWire
         protected override void LoadContent()
         {
             // Load textures
-            _wireTexture = Content.Load<Texture2D>("Wire002");
+            _wireTexture = Content.Load<Texture2D>("Wire003");
             _loopTextureLeft = Content.Load<Texture2D>("Loop003_links");
             _loopTextureRight = Content.Load<Texture2D>("Loop003_rechts");
             _collisionTexture = Content.Load<Texture2D>("Collision001");

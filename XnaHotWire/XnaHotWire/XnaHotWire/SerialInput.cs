@@ -51,7 +51,6 @@ namespace XnaHotWire
         {
             try
             {
-                //_serialport.Write(data, 0, data.Length);
                 _serialport.Write(message);
             }
             catch (Exception e)
@@ -62,7 +61,6 @@ namespace XnaHotWire
 
         public float GetPositionX()
         {
-            //todo: convert _lastMessage
             if (_lastMessage != null && _lastMessage.Length == 4 && !_lastMessage.Contains(":"))
             {
                 Char[] x = _lastMessage.ToCharArray();

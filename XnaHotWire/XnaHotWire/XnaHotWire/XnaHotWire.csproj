@@ -114,9 +114,6 @@
     <Compile Include="SimpleMessageBox.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="configuration.xml">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
