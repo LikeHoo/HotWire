@@ -33,7 +33,19 @@ namespace XnaHotWire
             serialInput.InvertX = inverXElement != null && bool.Parse(inverXElement.Value);
             serialInput.InvertY = inverYElement != null && bool.Parse(inverYElement.Value);
 
-            using (HotWire game = new HotWire(serialInput))
+            float x = serialInput.GetPositionX();
+            float y = serialInput.GetPositionY();
+
+            //if (x > 0 || (y > 127 || y < 125))
+            //{
+            //    using (Calibration Game = new Calibration(serialInput))
+            //    {
+            //        Game.Run();
+
+            //    }
+            //}
+
+            using (HotWire2 game = new HotWire2(serialInput))
             {
                 game.Run();
              

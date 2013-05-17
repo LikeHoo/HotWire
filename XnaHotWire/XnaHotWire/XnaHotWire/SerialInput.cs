@@ -140,5 +140,15 @@ namespace XnaHotWire
         public bool InvertX { get; set; }
 
         public bool InvertY { get; set; }
+
+        internal bool IsCalibrated()
+        {
+            if (GetPositionY() == 0 && GetPositionX() == 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

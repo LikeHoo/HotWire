@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace XnaHotWire
 {
     /// <summary>
-    /// This is the main type for your game
+    /// This is the main type for your Game
     /// </summary>
     public class HotWire : Game
     {
@@ -28,7 +28,7 @@ namespace XnaHotWire
         private Color[] _wireTextureData;
         private Color[] _collisionTextureData;
 
-        // The images will be drawn with this SpriteBatch
+        // The images will be drawn with this _spriteBatch
         private SpriteBatch _spriteBatch;
 
         // positions 
@@ -55,6 +55,8 @@ namespace XnaHotWire
         // Percentage of the screen on every side is the safe area
         private const float SafeAreaPortion = 0.00f;//old value 0.05f
 
+        SpriteFont _font;
+
         //SerialInput
         private readonly SerialInput _serialInput;
 
@@ -67,13 +69,13 @@ namespace XnaHotWire
             _graphics.PreferredBackBufferHeight = 600;
 
             // wird für die MessageBox benötigt!
-            Components.Add(new GamerServicesComponent(this));
+           //  Components.Add(new GamerServicesComponent(this));
 
             _serialInput = serialInput;
         }
 
         /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to
+        /// Allows the Game to perform any initialization it needs to before starting to
         /// run. This is where it can query for any required services and load any
         /// non-graphic related content.  Calling base.Initialize will enumerate through
         /// any components and initialize them as well.
@@ -97,7 +99,6 @@ namespace XnaHotWire
             // Set initial direction
             _previousPosition = _loopPosition;
             _currentPosition = _loopPosition;
-
         }
 
         /// <summary>
@@ -115,24 +116,29 @@ namespace XnaHotWire
             _backGroundTextureWarning = Content.Load<Texture2D>("BG_Cloudy_Red");
 
             // Extract collision data
-            _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
+            _wireTextureData = new Color[_wireTexture.Width*_wireTexture.Height];
             _wireTexture.GetData(_wireTextureData);
 
-            _loopTextureData = new Color[_loopTextureLeft.Width * _loopTextureLeft.Height];
+            _loopTextureData = new Color[_loopTextureLeft.Width*_loopTextureLeft.Height];
             _loopTextureLeft.GetData(_loopTextureData);
 
             _collisionTextureData = new Color[_collisionTexture.Width*_collisionTexture.Height];
             _collisionTexture.GetData(_collisionTextureData);
 
+            _font = Content.Load<SpriteFont>("SpriteFont");
+
             // Create a sprite batch to draw those textures
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
 
             // Set rotation center
-            _loopOrigin = new Vector2(_loopTextureLeft.Width / 2.0f, _loopTextureLeft.Height / 2.0f);
+            _loopOrigin = new Vector2(_loopTextureLeft.Width/2.0f, _loopTextureLeft.Height/2.0f);
+
+
+
         }
 
         /// <summary>
-        /// Allows the game to run logic such as updating the world,
+        /// Allows the Game to run logic such as updating the world,
         /// checking for collisions, gathering input and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
@@ -142,8 +148,8 @@ namespace XnaHotWire
             KeyboardState keyboard = Keyboard.GetState();
             GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
 
-            // Allows the game to exit
-            if (gamePad.Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
+            // Allows the Game to exit
+            if (keyboard.IsKeyDown(Keys.Escape))
             {
                 Exit();
             }
@@ -180,8 +186,9 @@ namespace XnaHotWire
             //debug
             float xx = _serialInput.GetPositionX();
             float yy = _serialInput.GetPositionY();
-            System.Console.Write("X:{0}  ",xx);
-            System.Console.WriteLine("Y:{0}",yy);
+            Console.Write("X:{0}  ",xx);
+            Console.WriteLine("Y:{0}",yy);
+
             _loopPosition.X += xx;//_serialInput.GetPositionX();
             _loopPosition.Y -= yy;//_serialInput.GetPositionY();
 
@@ -226,7 +233,7 @@ namespace XnaHotWire
         }
 
         /// <summary>
-        /// This is called when the game should draw itself.
+        /// This is called when the Game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
@@ -244,8 +251,8 @@ namespace XnaHotWire
 
                 if (!_gameLost)
                 {
-                    SimpleMessageBox.ShowMessageBox("LOOOOOSER", "Drehe die Potentiomenter zurück um neu zu starten!",
-                                                    new[] {"OK"}, 0, MessageBoxIcon.None);
+                    // SimpleMessageBox.ShowMessageBox("LOOOOOSER", "Drehe die Potentiomenter zurück um neu zu starten!",
+                       //                              new[] {"OK"}, 0, MessageBoxIcon.None);
                     _gameLost = true;
                 }
             }
@@ -262,7 +269,14 @@ namespace XnaHotWire
             _spriteBatch.Draw(_loopTextureLeft, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
             _spriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
             _spriteBatch.Draw(_loopTextureRight, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
-           
+
+            _spriteBatch.DrawString(_font, "X: " + _serialInput.GetPositionX(), new Vector2(10, 10), Color.Black);
+            _spriteBatch.DrawString(_font, "Y: " + _serialInput.GetPositionY(), new Vector2(10, 35), Color.Black);
+            _spriteBatch.DrawString(_font, "Angle: " + _loopAngle, new Vector2(10, 60), Color.Black);
+            _spriteBatch.DrawString(_font, "Direction: " + _loopDirection, new Vector2(10, 85), Color.Black);
+
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -312,8 +326,8 @@ namespace XnaHotWire
 
         private void TargetReached()
         {
-            SimpleMessageBox.ShowMessageBox("Winner!", "Drehe die Potentiomenter zurück um neu zu starten!",
-                                                    new[] { "OK" }, 0, MessageBoxIcon.None);
+            // SimpleMessageBox.ShowMessageBox("Winner!", "Drehe die Potentiomenter zurück um neu zu starten!",
+               //                                      new[] { "OK" }, 0, MessageBoxIcon.None);
         }
     }
 }
