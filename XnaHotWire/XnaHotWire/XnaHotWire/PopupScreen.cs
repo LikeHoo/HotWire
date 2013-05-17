@@ -15,7 +15,7 @@ namespace XnaHotWire
             set { _menuComponent.SelectedIndex = value; }
         }
 
-        public PopupnScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire2 parent)
+        public PopupnScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
         {
             string[] menuItems = { "Yes", "No" };

@@ -16,7 +16,7 @@ namespace XnaHotWire
             set { _menuComponent.SelectedIndex = value; }
         }
 
-        public LostScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire2 parent)
+        public LostScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
         {
             //string[] menuItems = { "Start Game" };

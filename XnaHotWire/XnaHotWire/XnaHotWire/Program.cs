@@ -45,7 +45,7 @@ namespace XnaHotWire
             //    }
             //}
 
-            using (HotWire2 game = new HotWire2(serialInput))
+            using (HotWire game = new HotWire(serialInput))
             {
                 game.Run();
              

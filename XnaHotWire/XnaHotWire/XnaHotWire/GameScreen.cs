@@ -19,7 +19,7 @@ namespace XnaHotWire
             get { return _components; }
         }
 
-        public GameScreen(Game game, SpriteBatch spriteBatch, HotWire2 parent)
+        public GameScreen(Game game, SpriteBatch spriteBatch, HotWire parent)
             : base(game)
         {
             _game = game;
@@ -67,6 +67,6 @@ namespace XnaHotWire
             }
         }
 
-        public HotWire2 Parent { get; set; }
+        public HotWire Parent { get; set; }
     }
 }

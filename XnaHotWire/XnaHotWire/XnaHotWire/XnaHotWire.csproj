@@ -111,11 +111,10 @@
     <Compile Include="LostScreen.cs" />
     <Compile Include="PopupScreen.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="HotWire2.cs" />
+    <Compile Include="HotWire.cs" />
     <Compile Include="CalibrationScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="HotWire.cs" />
     <Compile Include="GameScreen.cs" />
     <Compile Include="MenuComponent.cs" />
     <Compile Include="SerialInput.cs" />

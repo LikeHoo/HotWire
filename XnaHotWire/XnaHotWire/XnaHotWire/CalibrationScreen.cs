@@ -10,7 +10,7 @@ namespace XnaHotWire
         readonly Texture2D _image;
         readonly Rectangle _imageRectangle;
         
-        public CalibrationScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire2 parent)
+        public CalibrationScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
         {
           

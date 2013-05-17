@@ -50,7 +50,7 @@ namespace XnaHotWire
 
         public bool LoopHit { get; set; }
 
-        public ActionScreen(Game game, SpriteBatch spriteBatch, Texture2D image, HotWire2 parent)
+        public ActionScreen(Game game, SpriteBatch spriteBatch, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
         {
 
