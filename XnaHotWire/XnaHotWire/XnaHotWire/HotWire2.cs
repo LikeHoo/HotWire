@@ -12,11 +12,11 @@ namespace XnaHotWire
     {
         private SpriteBatch _spriteBatch;
 
-        GameScreen _activeScreen;
-        StartScreen _startScreen;
-
+        private GameScreen _activeScreen;
+        private StartScreen _startScreen;
         private ActionScreen _actionScreen;
         private CalibrationScreen _calibrationScreen;
+        private LostScreen _lostScreen;
 
         private readonly GraphicsDeviceManager _graphics;
         private readonly SerialInput _serialInput;
@@ -41,24 +41,42 @@ namespace XnaHotWire
             get { return Content.Load<SpriteFont>("SpriteFont"); }
         }
 
+        public Texture2D DefaultBackground
+        {
+            get { return Content.Load<Texture2D>("BG_Cloudy"); }
+        }
+
+        public KeyboardState NewKeyboardState { get; set; }
+
+        public KeyboardState OldKeyboardState { get; set; }
+
+        public bool CheckKey(Keys theKey)
+        {
+            return NewKeyboardState.IsKeyUp(theKey) && OldKeyboardState.IsKeyDown(theKey);
+        }
+
+
         protected override void LoadContent()
         {
             // Create a sprite batch to draw those textures
-            _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
-
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _startScreen = new StartScreen(this, _spriteBatch, DefaultFont, Content.Load<Texture2D>("BG_Cloudy"), this); 
-            
+
+            _startScreen = new StartScreen(this, _spriteBatch, DefaultFont, DefaultBackground, this); 
             Components.Add(_startScreen);
             _startScreen.Hide();
 
-            _actionScreen = new ActionScreen(this, _spriteBatch, Content.Load<Texture2D>("BG_Cloudy"), this);
+            _lostScreen = new LostScreen(this, _spriteBatch, DefaultFont, DefaultBackground, this);
+            Components.Add(_lostScreen);
+            _lostScreen.Hide();
+
+            _actionScreen = new ActionScreen(this, _spriteBatch, DefaultBackground, this);
             Components.Add(_actionScreen);
             _actionScreen.Hide();
 
-            _calibrationScreen = new CalibrationScreen(this, _spriteBatch, DefaultFont, Content.Load<Texture2D>("BG_Cloudy"), this);
+            _calibrationScreen = new CalibrationScreen(this, _spriteBatch, DefaultFont, DefaultBackground, this);
             Components.Add(_calibrationScreen);
             _calibrationScreen.Hide();
+
 
             _activeScreen = _startScreen;
            
@@ -76,25 +94,35 @@ namespace XnaHotWire
 
         protected override void Update(GameTime gameTime)
         {
-            _actionScreen.NewKeyboardState = Keyboard.GetState();
+            NewKeyboardState = Keyboard.GetState();
             _activeScreen.Update(gameTime);
-            _activeScreen.OldKeyboardState = _actionScreen.NewKeyboardState;
+            OldKeyboardState = NewKeyboardState;
         }
 
         public void GotoScreen(ScreenType screenType)
         {
             _activeScreen.Hide();
-            GraphicsDevice.Clear(Color.Beige);
+            // GraphicsDevice.Clear(Color.Beige);
 
             switch (screenType)
             {
                 case ScreenType.Action:
+                    _actionScreen.ResetPosition();
                     _actionScreen.GameLost = false;
                     _actionScreen.LoopHit = true;
                     _activeScreen = _actionScreen;
                     break;
                 case ScreenType.Calibration:
+                    _actionScreen.ResetPosition();
+                    _actionScreen.GameLost = false;
+                    _actionScreen.LoopHit = true;
                     _activeScreen = _calibrationScreen;
+                    break;
+                case ScreenType.Lost:
+                    _activeScreen = _lostScreen;
+                    break;
+                case ScreenType.Start:
+                    _activeScreen = _startScreen;
                     break;
 
             }

@@ -19,11 +19,11 @@ namespace XnaHotWire
         public StartScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire2 parent)
             : base(game, spriteBatch, parent)
         {
-             string[] menuItems = { "Start Game", "Calibration", "End Game" };
+             string[] menuItems = { "Start Game", "Calibration Dialog", "Lost Game Dialog", "End Game" };
             _menuComponent = new MenuComponent(game, spriteBatch, spriteFont, menuItems);
              Components.Add(_menuComponent);
-            _image = image;
-            _imageRectangle = new Rectangle(0, 0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height);
+            // _image = image;
+            // _imageRectangle = new Rectangle(0, 0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height);
         }
 
         protected override void LoadContent()
@@ -40,7 +40,7 @@ namespace XnaHotWire
         {
             _menuComponent.Update(gameTime);
 
-            if (CheckKey(Keys.Enter))
+            if (Parent.CheckKey(Keys.Enter))
             {
                 if (SelectedIndex == 0)
                 {
@@ -58,6 +58,11 @@ namespace XnaHotWire
                     Parent.GotoScreen(ScreenType.Calibration);
                 }
                 if (SelectedIndex == 2)
+                {
+                    
+                  Parent.GotoScreen(ScreenType.Lost);
+                }
+                if (SelectedIndex == 3)
                 {
                     Parent.Exit();
                 }

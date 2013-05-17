@@ -89,6 +89,14 @@ namespace XnaHotWire
             _font = game.Content.Load<SpriteFont>("SpriteFont");
 
 
+            ResetPosition();
+
+            // Set rotation center
+            _loopOrigin = new Vector2(_loopTextureLeft.Width / 2.0f, _loopTextureLeft.Height / 2.0f);
+        }
+
+        public void ResetPosition()
+        {
             // Start loop at outer left and middle height.
             _loopPosition.X = 0;
             _loopPosition.Y = _safeBounds.Height / 2 - _loopTextureLeft.Height;
@@ -96,9 +104,6 @@ namespace XnaHotWire
             // Set initial direction
             _previousPosition = _loopPosition;
             _currentPosition = _loopPosition;
-
-            // Set rotation center
-            _loopOrigin = new Vector2(_loopTextureLeft.Width / 2.0f, _loopTextureLeft.Height / 2.0f);
         }
 
         public override void Update(GameTime gameTime)
@@ -108,10 +113,10 @@ namespace XnaHotWire
             // GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
 
             //// Allows the Game to exit
-            //if (CheckKey(Keys.Escape))
-            //{
-            //    Game.Exit();
-            //}
+            if (Parent.CheckKey(Keys.Escape))
+            {
+                Parent.GotoScreen(ScreenType.Start);
+            }
 
             //// Move the loop left and right with arrow keys or d-pad
             //if (CheckKey(Keys.Left))
@@ -204,6 +209,8 @@ namespace XnaHotWire
 
                 if (!GameLost)
                 {
+                    Parent.GotoScreen(ScreenType.Lost);
+
                     GameLost = true;
                 }
             }

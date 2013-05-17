@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace XnaHotWire
 {
@@ -18,17 +19,19 @@ namespace XnaHotWire
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            if (Parent.CheckKey(Keys.Escape))
+            {
+                Parent.GotoScreen(ScreenType.Start);
+            }
         }
 
         public override void Draw(GameTime gameTime)
         {
-
             SpriteBatch.DrawString(Parent.DefaultFont, "Calibrate Controller to zero", new Vector2(100, 50), Color.Black);
 
             float x = Parent.SerialController.GetPositionX();
             float y = Parent.SerialController.GetPositionY();
-
-
 
             SpriteBatch.DrawString(Parent.DefaultFont, "X:" + x, new Vector2(100, 125), Color.Black);
             SpriteBatch.DrawString(Parent.DefaultFont, "Y:" + y, new Vector2(100, 150), Color.Black);
@@ -40,7 +43,6 @@ namespace XnaHotWire
                 Parent.GotoScreen(ScreenType.Action);
             }
           
-        
             base.Draw(gameTime);
         }
     }

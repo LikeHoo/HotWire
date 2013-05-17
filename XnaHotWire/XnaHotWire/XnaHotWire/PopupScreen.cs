@@ -25,9 +25,7 @@ namespace XnaHotWire
 
             _imageRectangle = new Rectangle((Game.Window.ClientBounds.Width - this._image.Width) / 2, (Game.Window.ClientBounds.Height - this._image.Height) / 2, this._image.Width, this._image.Height);
 
-            _menuComponent.Position = new Vector2(
-                (_imageRectangle.Width - _menuComponent.Width) / 2,
-                _imageRectangle.Bottom - _menuComponent.Height - 10);
+            _menuComponent.Position = new Vector2((_imageRectangle.Width - _menuComponent.Width) / 2, _imageRectangle.Bottom - _menuComponent.Height - 10);
         }
 
         public override void Update(GameTime gameTime)

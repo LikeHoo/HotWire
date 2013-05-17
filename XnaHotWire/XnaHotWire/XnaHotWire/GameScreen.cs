@@ -39,8 +39,7 @@ namespace XnaHotWire
         {
             base.Draw(gameTime);
             foreach (GameComponent component in _components)
-                if (component is DrawableGameComponent &&
-                    ((DrawableGameComponent) component).Visible)
+                if (component is DrawableGameComponent && ((DrawableGameComponent) component).Visible)
                     ((DrawableGameComponent) component).Draw(gameTime);
         }
 
@@ -66,16 +65,6 @@ namespace XnaHotWire
                 if (component is DrawableGameComponent)
                     ((DrawableGameComponent) component).Visible = false;
             }
-        }
-
-        public KeyboardState NewKeyboardState { get; set; }
-
-        public KeyboardState OldKeyboardState { get; set; }
-
-        protected bool CheckKey(Keys theKey)
-        {
-            return NewKeyboardState.IsKeyUp(theKey) &&
-                OldKeyboardState.IsKeyDown(theKey);
         }
 
         public HotWire2 Parent { get; set; }

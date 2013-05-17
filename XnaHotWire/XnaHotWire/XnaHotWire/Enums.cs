@@ -5,8 +5,8 @@ using System.Text;
 
 namespace XnaHotWire
 {
-   public enum ScreenType
-   {
-       Start, Action, Calibration
-   }
+    public enum ScreenType
+    {
+        Start, Action, Calibration, Lost
+    }
 }
