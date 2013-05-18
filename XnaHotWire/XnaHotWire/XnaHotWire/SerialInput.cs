@@ -48,7 +48,6 @@ namespace XnaHotWire
             SerialPort sp = (SerialPort) sender;
 
             string temp = sp.ReadExisting();
-            // _lastMessage = sp.ReadExisting();
 
             if (_buffer.Length < 10)
             {
@@ -98,10 +97,6 @@ namespace XnaHotWire
 
                 }
             }
-
-            //debug
-            Console.Write("X_:{0}  ", _valueX);
-
             return (float)(_valueX-128)/64;
         }
 
@@ -126,14 +121,12 @@ namespace XnaHotWire
                 {
                 }
             }
-            //debug
-            System.Console.Write("Y_:{0}  ", _valueY);
-
             return (float)(_valueY-128)/64;
         }
 
         public void ControlLed(int value)
         {
+            //todo:
             SendData(value.ToString());
         }
 
@@ -143,7 +136,7 @@ namespace XnaHotWire
 
         internal bool IsCalibrated()
         {
-            if (GetPositionY() == 0 && GetPositionX() == 0)
+            if (Math.Abs(GetPositionY() - 0) < 0.1 && Math.Abs(GetPositionX() - 0) < 0.1)
             {
                 return true;
             }
