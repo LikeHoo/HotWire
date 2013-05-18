@@ -136,7 +136,7 @@ namespace XnaHotWire
 
         internal bool IsCalibrated()
         {
-            if (Math.Abs(GetPositionY() - 0) < 0.1 && Math.Abs(GetPositionX() - 0) < 0.1)
+            if (Math.Abs(GetPositionY()) < 0.1 && Math.Abs(GetPositionX()) < 0.1)
             {
                 return true;
             }
