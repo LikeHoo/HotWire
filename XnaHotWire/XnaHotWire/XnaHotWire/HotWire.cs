@@ -14,12 +14,15 @@ namespace XnaHotWire
 
         private GameScreen _activeScreen;
         private StartScreen _startScreen;
+        private LevelSelectScreen _levelSelectScreen;
         private ActionScreen _actionScreen;
         private CalibrationScreen _calibrationScreen;
         private LostScreen _lostScreen;
 
         private readonly GraphicsDeviceManager _graphics;
         private readonly SerialInput _serialInput;
+
+        public string Level { get; set; }
 
         public HotWire(SerialInput serialInput)
         {
@@ -64,6 +67,10 @@ namespace XnaHotWire
             _startScreen = new StartScreen(this, _spriteBatch, DefaultFont, DefaultBackground, this); 
             Components.Add(_startScreen);
             _startScreen.Hide();
+
+            _levelSelectScreen = new LevelSelectScreen(this, _spriteBatch, DefaultFont, DefaultBackground, this);
+            Components.Add(_levelSelectScreen);
+            _levelSelectScreen.Hide();
 
             _lostScreen = new LostScreen(this, _spriteBatch, DefaultFont, DefaultBackground, this);
             Components.Add(_lostScreen);
@@ -123,6 +130,9 @@ namespace XnaHotWire
                     break;
                 case ScreenType.Start:
                     _activeScreen = _startScreen;
+                    break;
+                case ScreenType.LevelSelect:
+                    _activeScreen = _levelSelectScreen;
                     break;
 
             }

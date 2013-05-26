@@ -68,7 +68,7 @@ namespace XnaHotWire
             _imageRectangle = new Rectangle(0, 0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height);
 
             // Load textures
-            _wireTexture = game.Content.Load<Texture2D>("Wire003");
+            _wireTexture = game.Content.Load<Texture2D>("Wire004");//Parent.Level);
             _loopTextureLeft = game.Content.Load<Texture2D>("Loop003_links");
             _loopTextureRight = game.Content.Load<Texture2D>("Loop003_rechts");
             _collisionTexture = game.Content.Load<Texture2D>("Collision001");

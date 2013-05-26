@@ -44,14 +44,15 @@ namespace XnaHotWire
             {
                 if (SelectedIndex == 0)
                 {
-                    if (Parent.SerialController.IsCalibrated())
-                    {
-                        Parent.GotoScreen(ScreenType.Action);
-                    }
-                    else
-                    {
-                        Parent.GotoScreen(ScreenType.Calibration);
-                    }
+                    Parent.GotoScreen(ScreenType.LevelSelect);
+                    //if (Parent.SerialController.IsCalibrated())
+                    //{
+                    //    Parent.GotoScreen(ScreenType.Action);
+                    //}
+                    //else
+                    //{
+                    //    Parent.GotoScreen(ScreenType.Calibration);
+                    //}
                 }
                 if (SelectedIndex == 1)
                 {
