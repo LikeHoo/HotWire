@@ -164,6 +164,7 @@ namespace XnaHotWire
             if (_loopPosition.X > (_wireTexture.Width - 50))
             {
                 //TargetReached();
+                Parent.GotoScreen(ScreenType.Lost);
             }
 
             //Get the bounding rectangle of the collison
