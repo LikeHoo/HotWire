@@ -14,7 +14,7 @@ namespace XnaHotWire
         // The images we will draw
         private readonly Texture2D _loopTextureLeft;
         private readonly Texture2D _loopTextureRight;
-        private readonly Texture2D _wireTexture;
+//        private readonly Texture2D _wireTexture;
         private readonly Texture2D _collisionTexture;
         private readonly Texture2D _backGroundTexture;
         private readonly Texture2D _backGroundTextureWarning;
@@ -50,6 +50,8 @@ namespace XnaHotWire
 
         public bool LoopHit { get; set; }
 
+        public Texture2D _wireTexture { get; set; }
+
         public ActionScreen(Game game, SpriteBatch spriteBatch, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
         {
@@ -69,8 +71,8 @@ namespace XnaHotWire
 
             // Load textures
             _wireTexture = game.Content.Load<Texture2D>("Wire004");//Parent.Level);
-            _loopTextureLeft = game.Content.Load<Texture2D>("Loop003_links");
-            _loopTextureRight = game.Content.Load<Texture2D>("Loop003_rechts");
+            _loopTextureLeft = game.Content.Load<Texture2D>("Loop005_links");
+            _loopTextureRight = game.Content.Load<Texture2D>("Loop005_rechts");
             _collisionTexture = game.Content.Load<Texture2D>("Collision001");
 
             _backGroundTexture = game.Content.Load<Texture2D>("BG_Cloudy");

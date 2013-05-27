@@ -19,7 +19,7 @@ namespace XnaHotWire
         public StartScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
         {
-             string[] menuItems = { "Start Game", "Calibration Dialog", "Lost Game Dialog", "End Game" };
+             string[] menuItems = { "Start Game", "Calibration Dialog", "Lost Game Dialog", "End Game"};
             _menuComponent = new MenuComponent(game, spriteBatch, spriteFont, menuItems);
              Components.Add(_menuComponent);
             // _image = image;

@@ -22,8 +22,6 @@ namespace XnaHotWire
         private readonly GraphicsDeviceManager _graphics;
         private readonly SerialInput _serialInput;
 
-        public string Level { get; set; }
-
         public HotWire(SerialInput serialInput)
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -138,6 +136,11 @@ namespace XnaHotWire
             }
             _activeScreen.Show();
 
+        }
+
+        public void SetLevel(string level)
+        {
+            _actionScreen._wireTexture = Content.Load<Texture2D>(level);
         }
     }
 }

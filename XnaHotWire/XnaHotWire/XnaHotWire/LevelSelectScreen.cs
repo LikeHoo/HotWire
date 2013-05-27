@@ -39,15 +39,15 @@ namespace XnaHotWire
 
             if (Parent.CheckKey(Keys.Enter))
             {
-                string level = "Wire003";
+                string level = "Wire004";
 
                 switch (SelectedIndex)
                 {
                     case 0:
-                        level = "Wire003";
+                        level = "Wire004";
                         break;
                     case 1:
-                        level = "Wire004";
+                        level = "Wire005";
                         break;
                     case 2:
                         level = "Wire003";
@@ -56,7 +56,7 @@ namespace XnaHotWire
                         level = "Wire004";
                         break;
                 }
-                Parent.Level = level;
+                Parent.SetLevel(level);                
                 Parent.GotoScreen(ScreenType.Calibration);                
             }
         }
