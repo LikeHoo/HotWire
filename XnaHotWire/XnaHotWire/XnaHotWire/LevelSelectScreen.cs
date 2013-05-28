@@ -19,7 +19,7 @@ namespace XnaHotWire
         public LevelSelectScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
         {
-             string[] menuItems = { "Level 1", "Level 2", "Level 3", "Level 4" };
+             string[] menuItems = { "Level 1", "Level 2", "Level 3", "Level 4", "TestBg" };
             _menuComponent = new MenuComponent(game, spriteBatch, spriteFont, menuItems);
              Components.Add(_menuComponent);            
         }
@@ -50,10 +50,13 @@ namespace XnaHotWire
                         level = "Wire005";
                         break;
                     case 2:
-                        level = "Wire003";
+                        level = "Wire006";
                         break;
                     case 3:
-                        level = "Wire004";
+                        level = "Wire003";
+                        break;
+                    case 4:
+                        level = "TestBg";
                         break;
                 }
                 Parent.SetLevel(level);                
