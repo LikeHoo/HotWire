@@ -7,6 +7,7 @@ namespace XnaHotWire
 {
     public enum ScreenType
     {
-        Start, LevelSelect, Action, Calibration, Lost
+        Start, LevelSelect, Action, Calibration, Lost,
+        Won
     }
 }

@@ -17,7 +17,7 @@ namespace XnaHotWire
         private LevelSelectScreen _levelSelectScreen;
         private ActionScreen _actionScreen;
         private CalibrationScreen _calibrationScreen;
-        private LostScreen _lostScreen;
+        private MessageScreen _messageScreen;
 
         private readonly GraphicsDeviceManager _graphics;
         private readonly SerialInput _serialInput;
@@ -70,9 +70,9 @@ namespace XnaHotWire
             Components.Add(_levelSelectScreen);
             _levelSelectScreen.Hide();
 
-            _lostScreen = new LostScreen(this, _spriteBatch, DefaultFont, DefaultBackground, this);
-            Components.Add(_lostScreen);
-            _lostScreen.Hide();
+            _messageScreen = new MessageScreen(this, _spriteBatch, DefaultFont, DefaultBackground, this);
+            Components.Add(_messageScreen);
+            _messageScreen.Hide();
 
             _actionScreen = new ActionScreen(this, _spriteBatch, DefaultBackground, this);
             Components.Add(_actionScreen);
@@ -124,7 +124,16 @@ namespace XnaHotWire
                     _activeScreen = _calibrationScreen;
                     break;
                 case ScreenType.Lost:
-                    _activeScreen = _lostScreen;
+                    _messageScreen.Message = "Verloren! Neues Spiel?";
+                    _messageScreen.ScreenOnYes = ScreenType.LevelSelect;
+                    _messageScreen.ScreenOnNo = ScreenType.Start;
+                    _activeScreen = _messageScreen;
+                    break;
+                case ScreenType.Won:
+                    _messageScreen.Message = "Gewonnen! Neues Spiel?";
+                    _messageScreen.ScreenOnYes = ScreenType.LevelSelect;
+                    _messageScreen.ScreenOnNo = ScreenType.Start;
+                    _activeScreen = _messageScreen;
                     break;
                 case ScreenType.Start:
                     _activeScreen = _startScreen;
@@ -135,12 +144,11 @@ namespace XnaHotWire
 
             }
             _activeScreen.Show();
-
         }
 
         public void SetLevel(string level)
         {
-            _actionScreen._wireTexture = Content.Load<Texture2D>(level);
+            _actionScreen.WireTexture = Content.Load<Texture2D>(level);
         }
     }
 }

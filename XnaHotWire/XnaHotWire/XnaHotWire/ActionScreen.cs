@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Threading;
 
 namespace XnaHotWire
 {
@@ -35,6 +36,8 @@ namespace XnaHotWire
         private Vector2 _previousPosition;
         private Vector2 _currentPosition;
 
+        private DateTime _timeLost;
+
         // Blocks
         private readonly Vector2 _blockPosition = new Vector2();
 
@@ -45,12 +48,13 @@ namespace XnaHotWire
 
         // Percentage of the screen on every side is the safe area
         private const float SafeAreaPortion = 0.00f;//old value 0.05f
+        private bool _gameLeft;
 
         public bool GameLost { get; set; }
 
         public bool LoopHit { get; set; }
 
-        public Texture2D _wireTexture { get; set; }
+        public Texture2D WireTexture { get; set; }
 
         public ActionScreen(Game game, SpriteBatch spriteBatch, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
@@ -70,7 +74,7 @@ namespace XnaHotWire
             _imageRectangle = new Rectangle(0, 0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height);
 
             // Load textures
-            _wireTexture = game.Content.Load<Texture2D>("Wire004");//Parent.Level);
+            WireTexture = game.Content.Load<Texture2D>("Wire004");//Parent.Level);
             _loopTextureLeft = game.Content.Load<Texture2D>("Loop005_links");
             _loopTextureRight = game.Content.Load<Texture2D>("Loop005_rechts");
             _collisionTexture = game.Content.Load<Texture2D>("Collision001");
@@ -79,8 +83,8 @@ namespace XnaHotWire
             _backGroundTextureWarning = game.Content.Load<Texture2D>("BG_Cloudy_Red");
 
             // Extract collision data
-            _wireTextureData = new Color[_wireTexture.Width * _wireTexture.Height];
-            _wireTexture.GetData(_wireTextureData);
+            _wireTextureData = new Color[WireTexture.Width * WireTexture.Height];
+            WireTexture.GetData(_wireTextureData);
 
             _loopTextureData = new Color[_loopTextureLeft.Width * _loopTextureLeft.Height];
             _loopTextureLeft.GetData(_loopTextureData);
@@ -110,50 +114,16 @@ namespace XnaHotWire
 
         public override void Update(GameTime gameTime)
         {
-            // Get input
-            // KeyboardState keyboard = Keyboard.GetState();
-            // GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
+            if (_gameLeft && !Parent.SerialController.IsCalibrated())
+                LeaveGame(ScreenType.Calibration);
+
+            _gameLeft = false;
 
             //// Allows the Game to exit
             if (Parent.CheckKey(Keys.Escape))
             {
-                Parent.GotoScreen(ScreenType.Start);
+                LeaveGame(ScreenType.Start);
             }
-
-            //// Move the loop left and right with arrow keys or d-pad
-            //if (CheckKey(Keys.Left))
-            //{
-            //    _loopPosition.X -= LoopMoveSpeed;
-            //}
-
-
-            ////Constant movement by always increasing position?
-            //if (CheckKey(Keys.Right))
-            //{
-            //    _loopPosition.X += LoopMoveSpeed;
-            //}
-
-            //// Move the loop up and down with arrow keys or d-pad
-            //if (CheckKey(Keys.Up))
-            //{
-            //    _loopPosition.Y -= LoopMoveSpeed;
-            //}
-
-            //if (CheckKey(Keys.Down))
-            //{
-            //    _loopPosition.Y += LoopMoveSpeed;
-            //}
-
-            // Analoge input for xbox360 controller
-            //_loopPosition.X += gamePad.ThumbSticks.Left.X;
-            //_loopPosition.Y -= gamePad.ThumbSticks.Left.Y;
-
-            // Get input from serial controller
-            //debug
-            //float xx = _serialInput.GetPositionX();
-            //float yy = _serialInput.GetPositionY();
-            //Console.Write("X:{0}  ", xx);
-            //Console.WriteLine("Y:{0}", yy);
 
             _loopPosition.X += Parent.SerialController.GetPositionX();
             _loopPosition.Y -= Parent.SerialController.GetPositionY();
@@ -163,10 +133,10 @@ namespace XnaHotWire
             _loopPosition.Y = MathHelper.Clamp(_loopPosition.Y, _safeBounds.Top, _safeBounds.Bottom - _loopTextureLeft.Height);
 
             // Goal reached?
-            if (_loopPosition.X > (_wireTexture.Width - 50))
+            if (_loopPosition.X > (WireTexture.Width - 50))
             {
                 //TargetReached();
-                Parent.GotoScreen(ScreenType.Lost);
+               LeaveGame(ScreenType.Won);
             }
 
             //Get the bounding rectangle of the collison
@@ -174,7 +144,7 @@ namespace XnaHotWire
                 _collisionTexture.Width, _collisionTexture.Height);
 
             // Get the bounding rectangle of this block
-            Rectangle wireRectangle = new Rectangle(0, 0, _wireTexture.Width, _wireTexture.Height);
+            Rectangle wireRectangle = new Rectangle(0, 0, WireTexture.Width, WireTexture.Height);
 
             // Update each block
             LoopHit = false;
@@ -191,9 +161,10 @@ namespace XnaHotWire
 
             //  Check collision with the wire
             //if (IntersectPixels(wireRectangle, _wireTextureData, loopRectangle, _loopTextureData))
-            if (IntersectPixels(wireRectangle, _wireTextureData, collisionRectangle, _collisionTextureData))
+            if (IntersectPixels(wireRectangle, _wireTextureData, collisionRectangle, _collisionTextureData) && !GameLost)
             {
                 LoopHit = true;
+                _timeLost = DateTime.Now;
             }
 
             base.Update(gameTime);
@@ -212,9 +183,19 @@ namespace XnaHotWire
 
                 if (!GameLost)
                 {
-                    Parent.GotoScreen(ScreenType.Lost);
-
                     GameLost = true;
+                }
+
+                TimeSpan lostTill = DateTime.Now.Subtract(_timeLost);
+
+                if (lostTill.Seconds < 2)
+                {
+                    Parent.SerialController.SetLed(true);
+                }
+                else
+                {
+                    Parent.SerialController.SetLed(false);
+                    LeaveGame(ScreenType.Lost);
                 }
             }
 
@@ -228,7 +209,7 @@ namespace XnaHotWire
             rotateLoopPosition.Y = _loopPosition.Y + _loopTextureLeft.Height / 2.0f;
 
             SpriteBatch.Draw(_loopTextureLeft, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
-            SpriteBatch.Draw(_wireTexture, _blockPosition, Color.White);
+            SpriteBatch.Draw(WireTexture, _blockPosition, Color.White);
             SpriteBatch.Draw(_loopTextureRight, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
 
             SpriteBatch.DrawString(_font, "X: " + Parent.SerialController.GetPositionX(), new Vector2(10, 10), Color.Black);
@@ -237,6 +218,13 @@ namespace XnaHotWire
             SpriteBatch.DrawString(_font, "Direction: " + _loopDirection, new Vector2(10, 85), Color.Black);
 
             // GraphicsDevice.Clear(Color.CornflowerBlue);
+        }
+
+        private void LeaveGame(ScreenType screenType)
+        {
+            _gameLeft = true;
+
+            Parent.GotoScreen(screenType);
         }
 
         /// <summary>
@@ -280,6 +268,8 @@ namespace XnaHotWire
             // No intersection found
             return false;
         }
+
+
     }
 }
 

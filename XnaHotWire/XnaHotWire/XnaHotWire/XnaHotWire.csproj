@@ -109,7 +109,7 @@
   <ItemGroup>
     <Compile Include="ActionScreen.cs" />
     <Compile Include="LevelSelectScreen.cs" />
-    <Compile Include="LostScreen.cs" />
+    <Compile Include="MessageScreen.cs" />
     <Compile Include="PopupScreen.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="HotWire.cs" />

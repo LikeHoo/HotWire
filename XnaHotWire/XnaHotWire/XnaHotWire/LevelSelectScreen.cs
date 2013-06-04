@@ -63,11 +63,6 @@ namespace XnaHotWire
                 Parent.GotoScreen(ScreenType.Calibration);                
             }
         }
-
-        public override void Draw(GameTime gameTime)
-        {
-            base.Draw(gameTime);
-        }
     }
 }
 

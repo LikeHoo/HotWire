@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -6,15 +7,11 @@ namespace XnaHotWire
 {
     class CalibrationScreen : GameScreen
     {
-      
-        readonly Texture2D _image;
-        readonly Rectangle _imageRectangle;
-        
+        private DateTime _calibratedSince = DateTime.MinValue;
+
         public CalibrationScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
-        {
-          
-        }
+        { }
 
         public override void Update(GameTime gameTime)
         {
@@ -38,9 +35,21 @@ namespace XnaHotWire
 
             if (Parent.SerialController.IsCalibrated())
             {
-                SpriteBatch.DrawString(Parent.DefaultFont, "Calibrated!" + y, new Vector2(100, 175), Color.White);
+                if (_calibratedSince == DateTime.MinValue)
+                    _calibratedSince = DateTime.Now;
 
-                Parent.GotoScreen(ScreenType.Action);
+                TimeSpan span = DateTime.Now.Subtract(_calibratedSince);
+
+                int secondsToWait = 3 - span.Seconds;
+
+                SpriteBatch.DrawString(Parent.DefaultFont, "Calibrated! Game starts in " + secondsToWait + " Seconds", new Vector2(100, 250), Color.White);
+
+                if (secondsToWait == 0)
+                    Parent.GotoScreen(ScreenType.Action);
+            }
+            else
+            {
+                _calibratedSince = DateTime.MinValue;
             }
           
             base.Draw(gameTime);

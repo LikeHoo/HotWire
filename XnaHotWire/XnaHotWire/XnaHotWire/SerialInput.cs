@@ -121,10 +121,16 @@ namespace XnaHotWire
             return (float)(_valueY-128)/64;
         }
 
-        public void ControlLed(int value)
+        public void SetLed(bool status)
         {
-            //todo:
-            SendData(value.ToString());
+            if (status)
+            {
+                SendData("+");    
+            }
+            else
+            {
+                SendData("-");
+            }
         }
 
         public bool InvertX { get; set; }

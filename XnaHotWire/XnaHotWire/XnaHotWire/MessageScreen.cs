@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace XnaHotWire
 {
-    class LostScreen : GameScreen
+    class MessageScreen : GameScreen
     {
         readonly MenuComponent _menuComponent;
         readonly Texture2D _image;
@@ -16,7 +16,7 @@ namespace XnaHotWire
             set { _menuComponent.SelectedIndex = value; }
         }
 
-        public LostScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire parent)
+        public MessageScreen(Game game, SpriteBatch spriteBatch, SpriteFont spriteFont, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
         {
             //string[] menuItems = { "Start Game" };
@@ -51,34 +51,33 @@ namespace XnaHotWire
             {
                 if (SelectedIndex == 0)
                 {
-                    if (Parent.SerialController.IsCalibrated())
-                    {
-                        Parent.GotoScreen(ScreenType.Action);
-                    }
-                    else
-                    {
-                        Parent.GotoScreen(ScreenType.Calibration);
-                    }
+                    Parent.GotoScreen(ScreenOnYes);
                 }
                 else
                 {
-                    Parent.GotoScreen(ScreenType.Start);
+                    Parent.GotoScreen(ScreenOnNo);
                 }
             }
 
             if (Parent.CheckKey(Keys.Escape))
             {
-                Parent.GotoScreen(ScreenType.Start);
+                Parent.GotoScreen(ScreenOnNo);
             }
         }
 
         public override void Draw(GameTime gameTime)
         {
-            SpriteBatch.DrawString(Parent.DefaultFont, "Start a new Game?", new Vector2(100, 100), Color.White);
+            SpriteBatch.DrawString(Parent.DefaultFont, Message, new Vector2(100, 100), Color.White);
             // SpriteBatch.Draw(_image, _imageRectangle, Color.White);
             // _menuComponent.Draw(gameTime);
             base.Draw(gameTime);
         }
+
+        public string Message { get; set; }
+
+        public ScreenType ScreenOnYes { get; set; }
+
+        public ScreenType ScreenOnNo { get; set; }
     }
 }
 
