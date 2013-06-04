@@ -65,6 +65,8 @@ namespace XnaHotWire
         {
             //GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            SpriteBatch.DrawString(Parent.HeaderFont, "HotWire 1.0", new Vector2(400, 150), Color.White);
+
             //_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null);
              // _spriteBatch.Draw(_image, _imageRectangle, Color.White);
             // _menuComponent.Draw(gameTime);

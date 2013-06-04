@@ -42,6 +42,11 @@ namespace XnaHotWire
             get { return Content.Load<SpriteFont>("SpriteFont"); }
         }
 
+        public SpriteFont HeaderFont
+        {
+            get { return Content.Load<SpriteFont>("HeaderFont"); }
+        }
+
         public Texture2D DefaultBackground
         {
             get { return Content.Load<Texture2D>("BG_Cloudy"); }
