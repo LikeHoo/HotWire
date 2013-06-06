@@ -72,6 +72,8 @@ namespace XnaHotWire
             // _menuComponent.Draw(gameTime);
             //_spriteBatch.End();
 
+            SpriteBatch.DrawString(Parent.DefaultFont, "Copyright 2013 Elmar Schoettner, Matthias Emig und Marius Schweizer", new Vector2(275, SafeBounds.Height - 30), Color.White);
+
             base.Draw(gameTime);
         }
     }

@@ -126,6 +126,7 @@ namespace XnaHotWire
                     _actionScreen.ResetPosition();
                     _actionScreen.GameLost = false;
                     _actionScreen.LoopHit = true;
+                    _calibrationScreen.CalibratedSince = DateTime.MinValue;
                     _activeScreen = _calibrationScreen;
                     break;
                 case ScreenType.Lost:

@@ -21,9 +21,9 @@ namespace XnaHotWire
         private readonly Texture2D _backGroundTextureWarning;
 
         // The color data for the images; used for per pixel collision
-        private readonly Color[] _loopTextureData;
-        private readonly Color[] _wireTextureData;
-        private readonly Color[] _collisionTextureData;
+        private Color[] _loopTextureData;
+        private Color[] _wireTextureData;
+        private Color[] _collisionTextureData;
 
         // positions 
         private Vector2 _loopPosition;
@@ -41,40 +41,43 @@ namespace XnaHotWire
         // Blocks
         private readonly Vector2 _blockPosition = new Vector2();
 
-        // The sub-rectangle of the drawable area which should be visible on all TVs
-        private Rectangle _safeBounds;
-
         readonly SpriteFont _font;
 
-        // Percentage of the screen on every side is the safe area
-        private const float SafeAreaPortion = 0.00f;//old value 0.05f
         private bool _gameLeft;
 
         public bool GameLost { get; set; }
 
         public bool LoopHit { get; set; }
 
-        public Texture2D WireTexture { get; set; }
+        private Texture2D _wireTexture;
+
+        public Texture2D WireTexture
+        {
+            get { return _wireTexture; } 
+            set 
+            { 
+                _wireTexture = value;
+                // Extract collision data
+                _wireTextureData = new Color[WireTexture.Width * WireTexture.Height];
+                WireTexture.GetData(_wireTextureData);
+
+                _loopTextureData = new Color[_loopTextureLeft.Width * _loopTextureLeft.Height];
+                _loopTextureLeft.GetData(_loopTextureData);
+
+                _collisionTextureData = new Color[_collisionTexture.Width * _collisionTexture.Height];
+                _collisionTexture.GetData(_collisionTextureData);
+            }
+        }
 
         public ActionScreen(Game game, SpriteBatch spriteBatch, Texture2D image, HotWire parent)
             : base(game, spriteBatch, parent)
         {
-
-            // Calculate safe bounds based on current resolution
-            Viewport viewport = Game.GraphicsDevice.Viewport;
-            _safeBounds = new Rectangle(
-                (int)(viewport.Width * SafeAreaPortion),
-                (int)(viewport.Height * SafeAreaPortion),
-                (int)(viewport.Width * (1 - 2 * SafeAreaPortion)),
-                (int)(viewport.Height * (1 - 2 * SafeAreaPortion)));
-
-
             _image = image;
            
             _imageRectangle = new Rectangle(0, 0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height);
 
             // Load textures
-            WireTexture = game.Content.Load<Texture2D>("Wire004");//Parent.Level);
+           //  WireTexture = game.Content.Load<Texture2D>("Wire004");//Parent.Level);
             _loopTextureLeft = game.Content.Load<Texture2D>("Loop005_links");
             _loopTextureRight = game.Content.Load<Texture2D>("Loop005_rechts");
             _collisionTexture = game.Content.Load<Texture2D>("Collision001");
@@ -82,15 +85,7 @@ namespace XnaHotWire
             _backGroundTexture = game.Content.Load<Texture2D>("BG_Cloudy");
             _backGroundTextureWarning = game.Content.Load<Texture2D>("BG_Cloudy_Red");
 
-            // Extract collision data
-            _wireTextureData = new Color[WireTexture.Width * WireTexture.Height];
-            WireTexture.GetData(_wireTextureData);
-
-            _loopTextureData = new Color[_loopTextureLeft.Width * _loopTextureLeft.Height];
-            _loopTextureLeft.GetData(_loopTextureData);
-
-            _collisionTextureData = new Color[_collisionTexture.Width * _collisionTexture.Height];
-            _collisionTexture.GetData(_collisionTextureData);
+          
 
             _font = game.Content.Load<SpriteFont>("SpriteFont");
 
@@ -105,7 +100,7 @@ namespace XnaHotWire
         {
             // Start loop at outer left and middle height.
             _loopPosition.X = 0;
-            _loopPosition.Y = _safeBounds.Height / 2 - _loopTextureLeft.Height;
+            _loopPosition.Y = SafeBounds.Height / 2 - _loopTextureLeft.Height;
 
             // Set initial direction
             _previousPosition = _loopPosition;
@@ -129,8 +124,8 @@ namespace XnaHotWire
             _loopPosition.Y -= Parent.SerialController.GetPositionY();
 
             // Prevent the loop from moving off of the screen
-            _loopPosition.X = MathHelper.Clamp(_loopPosition.X, _safeBounds.Left, _safeBounds.Right - _loopTextureLeft.Width);
-            _loopPosition.Y = MathHelper.Clamp(_loopPosition.Y, _safeBounds.Top, _safeBounds.Bottom - _loopTextureLeft.Height);
+            _loopPosition.X = MathHelper.Clamp(_loopPosition.X, SafeBounds.Left, SafeBounds.Right - _loopTextureLeft.Width);
+            _loopPosition.Y = MathHelper.Clamp(_loopPosition.Y, SafeBounds.Top, SafeBounds.Bottom - _loopTextureLeft.Height);
 
             // Goal reached?
             if (_loopPosition.X > (WireTexture.Width - 50))

@@ -13,6 +13,12 @@ namespace XnaHotWire
             : base(game, spriteBatch, parent)
         { }
 
+        public DateTime CalibratedSince
+        {
+            get { return _calibratedSince; }
+            set { _calibratedSince = value; }
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -35,21 +41,23 @@ namespace XnaHotWire
 
             if (Parent.SerialController.IsCalibrated())
             {
-                if (_calibratedSince == DateTime.MinValue)
-                    _calibratedSince = DateTime.Now;
+                if (CalibratedSince == DateTime.MinValue)
+                    CalibratedSince = DateTime.Now;
 
-                TimeSpan span = DateTime.Now.Subtract(_calibratedSince);
+                TimeSpan span = DateTime.Now.Subtract(CalibratedSince);
 
                 int secondsToWait = 3 - span.Seconds;
 
                 SpriteBatch.DrawString(Parent.DefaultFont, "Calibrated! Game starts in " + secondsToWait + " Seconds", new Vector2(100, 250), Color.White);
 
                 if (secondsToWait == 0)
+                {
                     Parent.GotoScreen(ScreenType.Action);
+                }
             }
             else
             {
-                _calibratedSince = DateTime.MinValue;
+                CalibratedSince = DateTime.MinValue;
             }
           
             base.Draw(gameTime);

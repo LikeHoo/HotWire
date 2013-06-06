@@ -19,12 +19,26 @@ namespace XnaHotWire
             get { return _components; }
         }
 
+        // The sub-rectangle of the drawable area which should be visible on all TVs
+        protected Rectangle SafeBounds;
+
+        // Percentage of the screen on every side is the safe area
+        private const float SafeAreaPortion = 0.00f;//old value 0.05f
+
         public GameScreen(Game game, SpriteBatch spriteBatch, HotWire parent)
             : base(game)
         {
             _game = game;
             SpriteBatch = spriteBatch;
             Parent = parent;
+
+            // Calculate safe bounds based on current resolution
+            Viewport viewport = Game.GraphicsDevice.Viewport;
+            SafeBounds = new Rectangle(
+                (int)(viewport.Width * SafeAreaPortion),
+                (int)(viewport.Height * SafeAreaPortion),
+                (int)(viewport.Width * (1 - 2 * SafeAreaPortion)),
+                (int)(viewport.Height * (1 - 2 * SafeAreaPortion)));
         }
 
         public override void Update(GameTime gameTime)
