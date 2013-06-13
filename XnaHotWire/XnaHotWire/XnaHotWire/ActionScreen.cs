@@ -167,6 +167,8 @@ namespace XnaHotWire
 
         public override void Draw(GameTime gameTime)
         {
+            bool ret = false;
+
             // Change the background to red when the wire was hit by a block
             if (LoopHit && !GameLost)
             {
@@ -192,6 +194,8 @@ namespace XnaHotWire
                     Parent.SerialController.SetLed(false);
                     LeaveGame(ScreenType.Lost);
                 }
+
+                ret = true;
             }
 
             // Draw loop
@@ -203,14 +207,24 @@ namespace XnaHotWire
             rotateLoopPosition.X = _loopPosition.X + _loopTextureLeft.Width / 2.0f;
             rotateLoopPosition.Y = _loopPosition.Y + _loopTextureLeft.Height / 2.0f;
 
-            SpriteBatch.Draw(_loopTextureLeft, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            if (!ret)
+                SpriteBatch.Draw(_loopTextureLeft, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+            
             SpriteBatch.Draw(WireTexture, _blockPosition, Color.White);
-            SpriteBatch.Draw(_loopTextureRight, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
+
+            if (!ret)
+                SpriteBatch.Draw(_loopTextureRight, rotateLoopPosition, null, Color.White, _loopAngle, _loopOrigin, 1.0f, SpriteEffects.None, 0);
 
             SpriteBatch.DrawString(_font, "X: " + Parent.SerialController.GetPositionX(), new Vector2(10, 10), Color.Black);
             SpriteBatch.DrawString(_font, "Y: " + Parent.SerialController.GetPositionY(), new Vector2(10, 35), Color.Black);
             SpriteBatch.DrawString(_font, "Angle: " + _loopAngle, new Vector2(10, 60), Color.Black);
             SpriteBatch.DrawString(_font, "Direction: " + _loopDirection, new Vector2(10, 85), Color.Black);
+
+
+           
+              
+
+           
 
             // GraphicsDevice.Clear(Color.CornflowerBlue);
         }
